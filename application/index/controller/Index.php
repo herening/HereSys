@@ -1,17 +1,19 @@
 <?php
 namespace app\index\controller;
 
-use app\index\model\Test;
-use think\Model;
+use think\Controller;
 
-class Index
+class Index extends Controller
 {
     public function index()
     {
-        $demo = ['name'=> 'LN'];
-        Test::create($demo);
-
+        $test = db('test')->find();
+        print_r($test);exit();
+        //echo \app\facade\Test::hello('nihao');
     }
 
+    public function hello($name){
+        return 'hello,'.$name;
+    }
 
 }

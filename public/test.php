@@ -1,18 +1,15 @@
 <?php
 
 /*class Demo{
-
     final public function test(){
         echo '111';
     }
 }
 
-
 class Newbee extends Demo{
     public function index(){
         echo 2222;
     }
-
 }
 
 
@@ -41,7 +38,7 @@ var_dump($reference);
 var_dump($assigned);*/
 
 
-function foo($var)
+/*function foo($var)
 {
     return $var++;
 }
@@ -50,4 +47,44 @@ $a = 5;
 $b = foo($a);
 
 var_dump($a);
-var_dump($b);
+var_dump($b);*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
