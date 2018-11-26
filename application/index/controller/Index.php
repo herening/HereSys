@@ -8,8 +8,8 @@ class Index extends Controller
     public function index()
     {
         $test = db('test')->find();
-        print_r($test);exit();
-        //echo \app\facade\Test::hello('nihao');
+        $this->assign('test', $test);
+        return $this->fetch();
     }
 
     public function hello($name){

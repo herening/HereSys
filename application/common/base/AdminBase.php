@@ -8,6 +8,7 @@
  *                                     /___/
  * Date: 2018/11/1
  * Time: 10:30
+ * Contact: herening@qq.com
  */
 
 namespace app\common\base;
