@@ -1,19 +1,27 @@
 <?php
 namespace app\index\controller;
 
-use think\Controller;
+use app\common\base\FrontBase;
 
-class Index extends Controller
+class Index extends FrontBase
 {
     public function index()
     {
-        $test = db('test')->find();
-        $this->assign('test', $test);
-        return $this->fetch();
+//        $test = db('test')->find();
+//        $this->assign('test', $test);
+        return redirect('/admin/index/demo');
+
+        //return $this->fetch();
     }
 
     public function hello($name){
         return 'hello,'.$name;
     }
+
+    public function testFacade(){
+        echo \app\facade\Test::hello('hello');
+    }
+
+
 
 }

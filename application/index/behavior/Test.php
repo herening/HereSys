@@ -1,30 +1,22 @@
 <?php
 /**
- * Created by PhpStorm.
+ * Author: HereNing
  *     __ __                _  __ _
  *    / // /___  ____ ___  / |/ /(_)___  ___ _
  *   / _  // -_)/ __// -_)/    // // _ \/ _ `/
  *  /_//_/ \__//_/   \__//_/|_//_//_//_/\_, /
  *                                     /___/
- * User: HereNing
- * Date: 2018/11/1
- * Time: 10:16
+ * Date: 2018/11/29
+ * Time: 13:44
+ * Contact: herening@qq.com
  */
 
-namespace app\admin\controller;
+namespace app\index\behavior;
 
+class Test{
 
-use app\common\base\AdminBase;
-
-class Index extends AdminBase
-{
-    public function index()
+    public function run($params = '')
     {
         return;
-    }
-
-    public function demo()
-    {
-        echo 2222;
     }
 }

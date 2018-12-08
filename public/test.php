@@ -50,7 +50,7 @@ var_dump($a);
 var_dump($b);*/
 
 
-
+echo php_sapi_name();
 
 
 
