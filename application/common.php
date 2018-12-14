@@ -10,3 +10,18 @@
 // +----------------------------------------------------------------------
 
 // 应用公共文件
+
+use here\Random;
+
+if (!function_exists('build_salt')) {
+
+    function build_salt($len = 6)
+    {
+        return Random::alnum($len);
+    }
+}
+
+
+
+
+

@@ -7,11 +7,8 @@ class Index extends FrontBase
 {
     public function index()
     {
-//        $test = db('test')->find();
-//        $this->assign('test', $test);
-        return redirect('/admin/index/demo');
-
-        //return $this->fetch();
+        $str = build_salt();
+        echo $str;
     }
 
     public function hello($name){
