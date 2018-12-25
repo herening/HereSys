@@ -7,8 +7,7 @@ class Index extends FrontBase
 {
     public function index()
     {
-        $str = build_salt();
-        echo $str;
+        return $this->fetch();
     }
 
     public function hello($name){

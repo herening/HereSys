@@ -8,7 +8,7 @@
  *                                     /___/
  * Date: 2018/12/10
  * Time: 13:24
- * Contact: herening@qq.com
+ * Contact: helloheresin@gmail.com
  */
 
 namespace app\admin\model;
@@ -19,5 +19,5 @@ use think\Model;
 class AdminUser extends Model
 {
     protected $autoWriteTimestamp = true;
-    protected $table = 'admin';
+    protected $table = 'here_admin';
 }

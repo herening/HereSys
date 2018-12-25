@@ -6,17 +6,14 @@
  *   / _  // -_)/ __// -_)/    // // _ \/ _ `/
  *  /_//_/ \__//_/   \__//_/|_//_//_//_/\_, /
  *                                     /___/
- * Date: 2018/11/29
- * Time: 13:44
+ * Date: 2018/12/19
+ * Time: 10:59
  * Contact: helloheresin@gmail.com
  */
 
-namespace app\index\behavior;
+// module config
 
-class Test{
-
-    public function run($params = '')
-    {
-        return;
-    }
-}
+return[
+    // view type of back  template mvc | api mvvm
+    'view_type' => 'template'
+];

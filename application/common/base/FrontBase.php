@@ -8,7 +8,7 @@
  *                                     /___/
  * Date: 2018/12/8
  * Time: 11:32
- * Contact: herening@qq.com
+ * Contact: helloheresin@gmail.com
  */
 
 namespace app\common\base;

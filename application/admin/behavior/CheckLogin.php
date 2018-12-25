@@ -8,23 +8,21 @@
  *                                     /___/
  * Date: 2018/12/8
  * Time: 11:44
- * Contact: herening@qq.com
+ * Contact: helloheresin@gmail.com
  */
 
 namespace app\admin\behavior;
 
 use think\facade\Session;
 
-class CheckLogin{
+class CheckLogin {
 
     public function run($params = '')
     {
         if(Session::get('admin')){
             return true;
         }else{
-            //echo 22222;
             return redirect('/admin/index/demo');
         }
-
     }
 }

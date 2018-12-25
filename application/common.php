@@ -13,14 +13,32 @@
 
 use here\Random;
 
-if (!function_exists('build_salt')) {
 
-    function build_salt($len = 6)
+if (!function_exists('create_salt')) {
+
+    /**
+     * @param int $len
+     * @return string
+     */
+    function create_salt($len = 6)
     {
         return Random::alnum($len);
     }
 }
 
+
+if (!function_exists('encrypt_pwd')) {
+
+    /**
+     * @param string $pwd
+     * @param string $salt
+     * @return string
+     */
+    function encrypt_pwd($pwd, $salt = '')
+    {
+        return md5(md5($pwd).$salt);
+    }
+}
 
 
 
