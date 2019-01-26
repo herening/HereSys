@@ -46,7 +46,7 @@ class Index extends AdminBase
                     $this->error('用户名或者密码错误！','admin/index/index');
                 }
             }else{
-                $this->error('用户不存在','index/login');
+                $this->error('用户名或者密码错误！','index/login'); // error account or error pwd  cant throw exactly
             }
         }
         return $this->fetch();

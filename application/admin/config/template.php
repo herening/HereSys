@@ -9,16 +9,14 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-Route::get('think', function () {
-    return 'hello,ThinkPHP5!';
-});
-
-//Route::get('hello/:name', 'index/hello');
-
-Route::rule('hello/:name','hello')
-    ->middleware('check');
-
+// +----------------------------------------------------------------------
+// | 模板设置
+// +----------------------------------------------------------------------
 
 return [
-
+    // 全局替换标签
+    'tpl_replace_string'  =>  [
+        '__STATIC__'=>'/static',
+        '__LAY__' => '/static/layui',
+    ],
 ];

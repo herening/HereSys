@@ -10,7 +10,8 @@ class Index extends FrontBase
         return $this->fetch();
     }
 
-    public function hello($name){
+    public function hello(){
+        $name = $this->request->param('name');
         return 'hello,'.$name;
     }
 
