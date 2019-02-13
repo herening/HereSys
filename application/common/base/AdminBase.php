@@ -42,4 +42,8 @@ class AdminBase extends Controller
         }
     }
 
+    public function verify($code){
+        return captcha_check($code);
+    }
+
 }

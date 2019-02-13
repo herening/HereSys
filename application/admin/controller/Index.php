@@ -29,28 +29,38 @@ class Index extends AdminBase
     public function Login()
     {
         if($this->request->isPost()){
-            $username = $this->request->param('username');
-            $password = $this->request->param('password');
-            $captcha = $this->request->param('captcha');
-
-            if($captcha){
+            $data = input('post.');
+            if($data['captcha']){
                 // TODO: validate captcha
+                if(!$this->verify($data['captcha'])){
+                    return ['code' => 0, 'msg' => '验证码错误'];
+                }
             }
 
-            $userInfo = User::get(['username' => $username]);
+            $userInfo = User::get(['username' => $data['username']]);
             if($userInfo['username']){
-                if($userInfo['password'] == encrypt_pwd($password,$userInfo['salt'])){
+                if($userInfo['password'] == encrypt_pwd($data['password'],$userInfo['salt'])){
                     Session::set('admin', $userInfo->toArray());
-                    $this->success('登录成功！','admin/index/index');
+                    return ['code' => 1, 'msg' => '登录成功'];
+                    //$this->success('登录成功！','admin/index/index');
                 }else{
-                    $this->error('用户名或者密码错误！','admin/index/index');
+                    //$this->error('用户名或者密码错误！','admin/index/index');
+                    return ['code' => 0, 'msg' => '用户名或者密码错误！'];
                 }
             }else{
-                $this->error('用户名或者密码错误！','index/login'); // error account or error pwd  cant throw exactly
+                return ['code' => 0, 'msg' => '用户名或者密码错误！'];
+                //$this->error('用户名或者密码错误！','index/login'); // error account or error pwd  cant throw exactly
             }
         }
+        $this->assign('title','登录');
         return $this->fetch();
     }
+
+
+    public function logout(){
+        Session::clear();
+    }
+
 
     public function addUser()
     {
