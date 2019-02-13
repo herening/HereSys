@@ -15,5 +15,6 @@
 
 return[
     // view type of back  template mvc | api mvvm
-    'view_type' => 'template'
+    'view_type' => 'template',
+    'captcha' => 1
 ];

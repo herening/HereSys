@@ -1,10 +1,10 @@
 {
-  "name": "admin-lte",
-  "homepage": "https://adminlte.io",
+  "name": "heresys",
+  "homepage": "http://www.herening.top",
   "authors": [
-    "Abdullah Almsaeed <abdullah@almsaeedstudio.com>"
+    "herening <helloheresin@gmail.com>"
   ],
-  "description": "Admin dashboard and control panel template",
+  "description": "heresys UI",
   "main": [
     "index2.html",
     "dist/css/AdminLTE.css",
