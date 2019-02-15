@@ -40,6 +40,17 @@ if (!function_exists('encrypt_pwd')) {
     }
 }
 
+if (!function_exists('translate')) {
 
+    /**
+     * @param string $pwd
+     * @param string $salt
+     * @return string
+     */
+    function translate($pwd, $salt = '')
+    {
+        return md5(md5($pwd).$salt);
+    }
+}
 
 

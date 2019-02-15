@@ -34,7 +34,7 @@ class AdminBase extends Controller
                 if(Session::get('admin')){
                     return true;
                 }else{
-                    $this->error('请登录！','admin/index/login');
+                    $this->redirect('admin/index/login');
                 }
             }
         }else{
@@ -44,6 +44,15 @@ class AdminBase extends Controller
 
     public function verify($code){
         return captcha_check($code);
+    }
+
+
+    public function is_login(){
+        $admin = Session::get('admin');
+        if($admin['id'] > 0){
+            return true;
+        }
+
     }
 
 }
