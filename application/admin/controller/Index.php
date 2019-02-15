@@ -38,6 +38,7 @@ class Index extends AdminBase
         }
         if($this->request->isPost()){
             $data = input('post.');
+            //validate form data
             $validate = $this->validate($data, 'app\admin\validate\AdminUser');
             if($validate !== true){
                 return ['code' => 0, 'msg' => $validate];
