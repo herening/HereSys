@@ -28,6 +28,10 @@ class Index extends AdminBase
 
     public function Login()
     {
+        if($this->is_login()){
+            $this->error('you have logged in','admin/index/index');
+            //return ['code' => 0, 'msg' => translate('you have logged in')];
+        }
         if($this->request->isPost()){
             $data = input('post.');
             $validate = $this->validate($data, 'app\admin\validate\AdminUser');
