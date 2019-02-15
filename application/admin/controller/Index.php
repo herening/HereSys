@@ -22,8 +22,12 @@ class Index extends AdminBase
 {
     public function index()
     {
-        echo config('app.view_type');
-        //return $this->fetch();
+        //echo config('app.view_type');
+
+
+
+        $this->assign('title',config('app_name'));
+        return $this->fetch();
     }
 
     public function Login()
@@ -66,7 +70,8 @@ class Index extends AdminBase
 
 
     public function logout(){
-        Session::clear();
+        Session::delete('admin');
+        return $this->success('you have logged out','admin/index/login');
     }
 
 
