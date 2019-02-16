@@ -6,18 +6,15 @@
  *   / _  // -_)/ __// -_)/    // // _ \/ _ `/
  *  /_//_/ \__//_/   \__//_/|_//_//_//_/\_, /
  *                                     /___/
- * Date: 2018/02/10
- * Time: 13:24
+ * Date: 2018/2/16
+ * Time: 17:00
  * Contact: helloheresin@gmail.com
  */
 
 namespace app\admin\model;
 
 
-use think\Model;
-
-class AdminUser extends Model
+class AuthMenu
 {
     protected $autoWriteTimestamp = true;
-    protected $table = 'here_admin';
 }

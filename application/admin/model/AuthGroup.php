@@ -16,8 +16,7 @@ namespace app\admin\model;
 
 use think\Model;
 
-class AdminUser extends Model
+class AuthGroup extends Model
 {
     protected $autoWriteTimestamp = true;
-    protected $table = 'here_admin';
 }

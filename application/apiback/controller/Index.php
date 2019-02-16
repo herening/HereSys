@@ -11,7 +11,7 @@
  * Contact: helloheresin@gmail.com
  */
 
-namespace app\admin\controller;
+namespace app\apiback\controller;
 
 use app\admin\validate\AdminUser;
 use app\common\base\AdminBase;
@@ -22,18 +22,13 @@ class Index extends AdminBase
 {
     public function index()
     {
-        //echo config('app.view_type');
-
-
-
-        $this->assign('title',config('app_name'));
-        return $this->fetch();
+        return $this->api_success(['welcome'],'request success');
     }
 
     public function Login()
     {
         if($this->is_login()){
-            $this->error('you have logged in','admin/index/index');
+            $this->api_error('you have logged in');
         }
         if($this->request->isPost()){
             $data = input('post.');
@@ -58,7 +53,7 @@ class Index extends AdminBase
                     $admin->login_failure = 0;
                     $admin->login_time = time();
                     $admin->save();
-                    return $this->api_success([], '登录成功！');
+                    return $this->api_success('登录成功！');
                 }else{
                     $admin->login_failure++;
                     $admin->save();
@@ -68,8 +63,6 @@ class Index extends AdminBase
                 return $this->api_error('用户名或者密码错误');
             }
         }
-        $this->assign('title','登录');
-        return $this->fetch();
     }
 
 

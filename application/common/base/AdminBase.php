@@ -14,6 +14,8 @@
 namespace app\common\base;
 
 
+use app\admin\model\AuthGroup;
+use app\admin\model\AuthMenu;
 use think\Controller;
 //use think\facade\Hook;
 use think\facade\Session;
@@ -42,6 +44,24 @@ class AdminBase extends Controller
         }
     }
 
+    public function api_success($data = [], $msg = '', $code = 200){
+        $result = [
+            'code' => $code,
+            'msg'  => $msg,
+            'data' => $data,
+        ];
+        return json($result);
+    }
+
+    public function api_error($msg = '', $data = [], $code = 0){
+        $result = [
+            'code' => $code,
+            'msg'  => $msg,
+            'data' => $data,
+        ];
+        return json($result);
+    }
+
     public function verify($code){
         return captcha_check($code);
     }
@@ -54,5 +74,24 @@ class AdminBase extends Controller
         }
 
     }
+
+    public function check_auth($uid){
+
+
+    }
+
+    public function get_auths($group_id){
+        $auths = AuthGroup::get($group_id);
+        $auth_array = explode(',', $auths);
+        $menus = AuthMenu::All($auth_array);
+
+        foreach ($menus as $key => $val){
+            if($val['pid'] == 0){
+                $result['p'][] = $val;
+            }
+        }
+
+    }
+
 
 }
