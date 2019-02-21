@@ -24,6 +24,7 @@ class AdminBase extends Controller
 {
     public function initialize()
     {
+        $this->get_auths(1);
         if(config('app.view_type') == 'template') {
             //Hook::add('check_login', 'app\\admin\\behavior\\CheckLogin');
             //Hook::listen('check_login');
@@ -44,11 +45,30 @@ class AdminBase extends Controller
         }
     }
 
+    public function check_auth($uid){
+
+
+    }
+
+    public function get_auths($group_id){
+        $auths = AuthGroup::get($group_id);
+        $auth_array = explode(',', $auths['auths']);
+        $menus = AuthMenu::where(['status' => 1, 'id' => $auth_array])->select()->toArray();
+        //mydebug($menus);
+        $result = [];
+        foreach ($menus as $key => $val){
+            if($val['pid'] == 0){
+                $result['p'][] = $val;
+            }
+        }
+        mydebug($result);
+    }
+
     public function api_success($data = [], $msg = '', $code = 200){
         $result = [
             'code' => $code,
             'msg'  => $msg,
-            'data' => $data,
+            'data' => $data
         ];
         return json($result);
     }
@@ -57,7 +77,7 @@ class AdminBase extends Controller
         $result = [
             'code' => $code,
             'msg'  => $msg,
-            'data' => $data,
+            'data' => $data
         ];
         return json($result);
     }
@@ -65,7 +85,6 @@ class AdminBase extends Controller
     public function verify($code){
         return captcha_check($code);
     }
-
 
     public function is_login(){
         $admin = Session::get('admin');
@@ -75,23 +94,6 @@ class AdminBase extends Controller
 
     }
 
-    public function check_auth($uid){
-
-
-    }
-
-    public function get_auths($group_id){
-        $auths = AuthGroup::get($group_id);
-        $auth_array = explode(',', $auths);
-        $menus = AuthMenu::All($auth_array);
-
-        foreach ($menus as $key => $val){
-            if($val['pid'] == 0){
-                $result['p'][] = $val;
-            }
-        }
-
-    }
 
 
 }

@@ -14,7 +14,9 @@
 namespace app\admin\model;
 
 
-class AuthMenu
+use think\Model;
+
+class AuthMenu extends Model
 {
     protected $autoWriteTimestamp = true;
 }

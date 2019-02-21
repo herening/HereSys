@@ -19,4 +19,5 @@ use think\Model;
 class AuthGroup extends Model
 {
     protected $autoWriteTimestamp = true;
+    protected $pk = 'group_id';
 }

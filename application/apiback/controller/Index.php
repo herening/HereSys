@@ -22,7 +22,7 @@ class Index extends AdminBase
 {
     public function index()
     {
-        return $this->api_success(['welcome'],'request success');
+        return $this->api_success('welcome','request success');
     }
 
     public function Login()
