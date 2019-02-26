@@ -16,6 +16,7 @@ namespace app\common\base;
 
 use app\admin\model\AuthGroup;
 use app\admin\model\AuthMenu;
+use here\Tree;
 use think\Controller;
 //use think\facade\Hook;
 use think\facade\Session;
@@ -55,12 +56,8 @@ class AdminBase extends Controller
         $auth_array = explode(',', $auths['auths']);
         $menus = AuthMenu::where(['status' => 1, 'id' => $auth_array])->select()->toArray();
         //mydebug($menus);
-        $result = [];
-        foreach ($menus as $key => $val){
-            if($val['pid'] == 0){
-                $result['p'][] = $val;
-            }
-        }
+        Tree::instance()->init($menus);
+        $result = Tree::instance()->getTreeList(Tree::instance()->getTreeArray(0));
         mydebug($result);
     }
 
