@@ -53,12 +53,18 @@ class AdminBase extends Controller
 
     public function get_auths($group_id){
         $auths = AuthGroup::get($group_id);
+        mydebug($auths,1);
         $auth_array = explode(',', $auths['auths']);
-        $menus = AuthMenu::where(['status' => 1, 'id' => $auth_array])->select()->toArray();
-        //mydebug($menus);
-        Tree::instance()->init($menus);
-        $result = Tree::instance()->getTreeList(Tree::instance()->getTreeArray(0));
-        mydebug($result);
+        $menu_list = AuthMenu::where(['status' => 1, 'id' => $auth_array])
+                     ->where('type', '>', 0)
+                     ->column('id, title, pid');  //column output array
+        $nav = AuthMenu::where(['status' => 1, 'pid' => 0, 'type' => 0 ])->order('sort', 'ASC' )->select()->toArray();
+
+        $tree = Tree::instance()->init($menu_list);
+        $menus = $tree->getTreeList($tree->getTreeArray(0));
+        mydebug($menus,1);
+        $this->assign('nav', $nav);
+        $this->assign('menus', $menus);
     }
 
     public function api_success($data = [], $msg = '', $code = 200){
