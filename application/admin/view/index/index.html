@@ -1,64 +1,92 @@
-{include file="common/header"/}
-
-<body class="layui-layout-body">
+{include file="common/header" /}
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <div class="layui-logo">{$title|default='系统管理'}</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
             {volist name="nav" id="vo"}
-                <li class="layui-nav-item"><a href="{$vo.url}">{$vo.title}</a></li>
+            <li class="layui-nav-item"><a href="{$vo.url}">{$vo.title}</a></li>
             {/volist}
         </ul>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">herening
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">{$Think.config.app.app_name}
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="">基本资料</a></dd>
                     <dd><a href="">安全设置</a></dd>
+                    <dd><a class="login-out">退出</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="{:url('admin/index/logout')}">退出</a></li>
         </ul>
     </div>
 
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">  <!--lay-shrink="all"   展开子菜单时，是否收缩兄弟节点已展开的子菜单-->
                 {volist name="menus" id="vo"}
-                <li class="layui-nav-item layui-nav-itemed">
+                <li class="layui-nav-item">
                     <a class="" href="javascript:;">{$vo.title}</a>
-                    {if $vo.haschild == 1}
+                    {if $vo.childlist != null}
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;"></a></dd>
+                        {volist name="$vo['childlist']" id="child"}
+                        <dd><a href="{$child.url}">{$child.title}</a></dd>
+                        {/volist}
                     </dl>
-                        {/if}
+                    {/if}
                 </li>
                 {/volist}
             </ul>
         </div>
     </div>
-
-    <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div style="padding: 15px;">内容主体区域</div>
+    <div class="layui-body" style="bottom: 0;border-left: solid 2px #1AA094;" id="admin-body">
+        <div class="layui-tab admin-nav-card layui-tab-brief" lay-filter="admin-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">
+                    <i class="icon icon-earth" aria-hidden="true"></i>
+                    <cite>控制面板</cite>
+                </li>
+            </ul>
+            <div class="layui-tab-content" style="min-height: 150px; padding: 0;">
+                <div class="layui-tab-item layui-show">
+                    <iframe src="{:url('info')}"></iframe>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        © herening.com {:date('Y',time())}
-    </div>
+<div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © herening.com {:date('Y',time())}
 </div>
-{include file="common/footer"/}
+</div>
+{include file="common/footer" /}
 <script>
-    //JavaScript代码区域
-    layui.use('element', function(){
-        var element = layui.element;
+    layui.use(['element', 'layer'], function(){
+
+        var layer = layui.layer,
+            element = layui.element,
+            $ = layui.jquery;
+
+        $('.login-out').click('.login-out', function () {
+            loading =layer.load(1, {shade: [0.1,'#fff'] });//0.1透明度的白色背景
+            $.post('{:url("index/logout")}',function(res){
+                layer.close(loading);
+                if(res.code == 200){
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function(){
+                        location.href = res.data;
+                    });
+                }else{
+                    layer.msg('数据错误')
+                }
+            });
+        });
+        $('.layui-nav-tree li:first').addClass('layui-nav-itemed');
 
     });
 </script>
+
 </body>
 </html>

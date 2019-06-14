@@ -1,0 +1,23 @@
+.admin-nav-card .layui-tab-item iframe {
+	width: 100%;
+	border: 0;
+	height: 100%;
+}
+.layui-card{
+	width: 50%;
+	border: 1px solid #1AA094;
+}
+.layui-card-header{
+	background-color: rgba(255, 245, 139, 0.5);
+}
+
+
+
+
+
+
+
+
+
+
+
