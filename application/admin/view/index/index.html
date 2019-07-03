@@ -25,14 +25,14 @@
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree"  lay-filter="test">  <!--lay-shrink="all"   展开子菜单时，是否收缩兄弟节点已展开的子菜单-->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="here-nav">  <!--lay-shrink="all"   展开子菜单时，是否收缩兄弟节点已展开的子菜单-->
                 {volist name="menus" id="vo"}
                 <li class="layui-nav-item">
                     <a class="" href="javascript:;">{$vo.title}</a>
                     {if $vo.childlist != null}
                     <dl class="layui-nav-child">
                         {volist name="$vo['childlist']" id="child"}
-                        <dd><a href="{$child.url}">{$child.title}</a></dd>
+                        <dd><a href="javascript:;" lay-data="{$child.url}">{$child.title}</a></dd>
                         {/volist}
                     </dl>
                     {/if}
@@ -41,7 +41,7 @@
             </ul>
         </div>
     </div>
-    <div class="layui-body" style="bottom: 0;border-left: solid 2px #1AA094;" id="admin-body">
+    <div class="layui-body" id="admin-body">
         <div class="layui-tab admin-nav-card layui-tab-brief" lay-filter="admin-tab">
             <ul class="layui-tab-title">
                 <li class="layui-this">
@@ -49,9 +49,9 @@
                     <cite>控制面板</cite>
                 </li>
             </ul>
-            <div class="layui-tab-content" style="min-height: 150px; padding: 0;">
-                <div class="layui-tab-item layui-show">
-                    <iframe src="{:url('info')}"></iframe>
+            <div class="layui-tab-content" >
+                <div class="layui-tab-item layui-show" >
+                    <iframe src="{:url('admin/index/info')}"></iframe>
                 </div>
             </div>
         </div>
@@ -70,7 +70,7 @@
             element = layui.element,
             $ = layui.jquery;
 
-        $('.login-out').click('.login-out', function () {
+        $('.login-out').click( function () {
             loading =layer.load(1, {shade: [0.1,'#fff'] });//0.1透明度的白色背景
             $.post('{:url("index/logout")}',function(res){
                 layer.close(loading);
@@ -84,6 +84,10 @@
             });
         });
         $('.layui-nav-tree li:first').addClass('layui-nav-itemed');
+        element.on('nav(filter)', function(elem){
+            console.log(elem); //得到当前点击的DOM对象
+        });
+
 
     });
 </script>

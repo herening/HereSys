@@ -1,3 +1,26 @@
+.row,.col,.panel_word,.panel_icon{ box-sizing:border-box; -webkit-box-sizing:border-box; -moz-box-sizing:border-box; -o-box-sizing:border-box;}
+.row{ margin-left:10px; overflow:hidden;}
+.col{ padding-left:10px;}
+.panel{float: left; text-align: center; width:16.666%; min-width:210px; margin-bottom: 10px;}
+.panel_box a{display:block; background-color:#f2f2f2; border-radius:5px; overflow:hidden; }
+.panel_icon{ width:40%; display: inline-block; padding:22px 0; background-color:#54ade8;float:left;}
+.panel_icon i{ font-size:3em; color:#fff;}
+.panel a:hover .panel_icon i{ display:inline-block; transform:rotate(360deg); -webkit-transform:rotate(360deg); -moz-transform:rotate(360deg); -o-transform:rotate(360deg); -ms-transform:rotate(360deg);}
+.panel_word{ width:60%; display: inline-block; float:right; margin-top: 22px; }
+.panel_word span{ font-size:25px; display:block; height:30px; line-height:30px; }
+.allNews em{ font-style:normal; font-size:16px;display: block; }
+.panel_box a .allNews cite{ display:none; }
+.panel_box a cite{ font-size:16px; display: block; font-style:normal; }
+
+
+
+.layui-body{
+	background-color: #F2F2F2;
+	padding: 10px;
+	bottom: 0;
+	border-left: solid 2px #1AA094;
+}
+
 .admin-nav-card .layui-tab-item iframe {
 	width: 100%;
 	border: 0;
@@ -5,10 +28,28 @@
 }
 .layui-card{
 	width: 50%;
-	border: 1px solid #1AA094;
+	/*border: 1px solid #1AA094;*/
+	padding: 20px;
 }
 .layui-card-header{
-	background-color: rgba(255, 245, 139, 0.5);
+	/*background-color: rgba(255, 245, 139, 0.5);*/
+}
+.layui-tab-content{
+	height: 100%; padding: 0;
+}
+
+.layui-tab{
+	margin: 0;
+}
+
+.layui-tab-item{
+	position: absolute;
+	top: 55px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 0;
+	margin: 0;
 }
 
 

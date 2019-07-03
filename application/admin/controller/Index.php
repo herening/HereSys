@@ -29,7 +29,7 @@ class Index extends AdminBase
     }
 
     public function info(){
-        $sys_info = $this->sys_info();
+        $sys_info = $this->sysInfo();
         $this->assign('sys_info',$sys_info);
         return $this->fetch();
     }

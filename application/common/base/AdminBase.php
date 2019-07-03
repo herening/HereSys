@@ -101,7 +101,7 @@ class AdminBase extends Controller
 
     }
 
-    public function sys_info(){
+    public function sysInfo(){
         $sys_info['os']             = PHP_OS;
         $sys_info['zlib']           = function_exists('gzclose') ? 'YES' : 'NO';//zlib
         $sys_info['safe_mode']      = (boolean) ini_get('safe_mode') ? 'YES' : 'NO';//safe_mode = Off
