@@ -1,82 +1,96 @@
-{include file="common/header"/}
-
-<body class="layui-layout-body">
+{include file="common/header" /}
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <div class="layui-logo">{$title|default='系统管理'}</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
-            <li class="layui-nav-item"><a href="">控制台</a></li>
-            <li class="layui-nav-item"><a href="">商品管理</a></li>
-            <li class="layui-nav-item"><a href="">用户</a></li>
-            <li class="layui-nav-item">
-                <a href="javascript:;">其它系统</a>
-                <dl class="layui-nav-child">
-                    <dd><a href="">邮件管理</a></dd>
-                    <dd><a href="">消息管理</a></dd>
-                    <dd><a href="">授权管理</a></dd>
-                </dl>
-            </li>
+            {volist name="nav" id="vo"}
+            <li class="layui-nav-item"><a href="{$vo.url}">{$vo.title}</a></li>
+            {/volist}
         </ul>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    herening
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">{$Think.config.app.app_name}
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="">基本资料</a></dd>
                     <dd><a href="">安全设置</a></dd>
+                    <dd><a class="login-out">退出</a></dd>
                 </dl>
             </li>
-            <li class="layui-nav-item"><a href="">退出</a></li>
         </ul>
     </div>
 
     <div class="layui-side layui-bg-black">
         <div class="layui-side-scroll">
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-                <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">所有商品</a>
-                    <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">列表一</a></dd>
-                        <dd><a href="javascript:;">列表二</a></dd>
-                        <dd><a href="javascript:;">列表三</a></dd>
-                        <dd><a href="">超链接</a></dd>
-                    </dl>
-                </li>
+            <ul class="layui-nav layui-nav-tree"  lay-filter="here-nav">  <!--lay-shrink="all"   展开子菜单时，是否收缩兄弟节点已展开的子菜单-->
+                {volist name="menus" id="vo"}
                 <li class="layui-nav-item">
-                    <a href="javascript:;">解决方案</a>
+                    <a class="" href="javascript:;">{$vo.title}</a>
+                    {if $vo.childlist != null}
                     <dl class="layui-nav-child">
-                        <dd><a href="javascript:;">列表一</a></dd>
-                        <dd><a href="javascript:;">列表二</a></dd>
-                        <dd><a href="">超链接</a></dd>
+                        {volist name="$vo['childlist']" id="child"}
+                        <dd><a href="javascript:;" lay-data="{$child.url}">{$child.title}</a></dd>
+                        {/volist}
                     </dl>
+                    {/if}
                 </li>
-                <li class="layui-nav-item"><a href="">云市场</a></li>
-                <li class="layui-nav-item"><a href="">发布商品</a></li>
+                {/volist}
             </ul>
         </div>
     </div>
-
-    <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div style="padding: 15px;">内容主体区域</div>
+    <div class="layui-body" id="admin-body">
+        <div class="layui-tab admin-nav-card layui-tab-brief" lay-filter="admin-tab">
+            <ul class="layui-tab-title">
+                <li class="layui-this">
+                    <i class="icon icon-earth" aria-hidden="true"></i>
+                    <cite>控制面板</cite>
+                </li>
+            </ul>
+            <div class="layui-tab-content" >
+                <div class="layui-tab-item layui-show" >
+                    <iframe src="{:url('admin/index/info')}"></iframe>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        © herening.com {:date('Y',time())}
-    </div>
+<div class="layui-footer">
+    <!-- 底部固定区域 -->
+    © herening.com {:date('Y',time())}
 </div>
-{include file="common/footer"/}
+</div>
+{include file="common/footer" /}
 <script>
-    //JavaScript代码区域
-    layui.use('element', function(){
-        var element = layui.element;
+    layui.use(['element', 'layer'], function(){
+
+        var layer = layui.layer,
+            element = layui.element,
+            $ = layui.jquery;
+
+        $('.login-out').click( function () {
+            loading =layer.load(1, {shade: [0.1,'#fff'] });//0.1透明度的白色背景
+            $.post('{:url("index/logout")}',function(res){
+                layer.close(loading);
+                if(res.code == 200){
+                    layer.msg(res.msg, {icon: 1, time: 1000}, function(){
+                        location.href = res.data;
+                    });
+                }else{
+                    layer.msg('数据错误')
+                }
+            });
+        });
+        $('.layui-nav-tree li:first').addClass('layui-nav-itemed');
+        element.on('nav(filter)', function(elem){
+            console.log(elem); //得到当前点击的DOM对象
+        });
+
 
     });
 </script>
+
 </body>
 </html>

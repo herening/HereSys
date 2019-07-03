@@ -11,7 +11,7 @@
  * Contact: helloheresin@gmail.com
  */
 
-namespace app\admin\controller;
+namespace app\apiback\controller;
 
 use app\admin\validate\AdminUser;
 use app\common\base\AdminBase;
@@ -22,42 +22,30 @@ class Index extends AdminBase
 {
     public function index()
     {
-        //echo config('app.view_type');
-
-        $this->assign('title',config('app_name'));
-        return $this->fetch();
+        return $this->api_success('welcome','request success');
     }
 
-    public function info(){
-        $sys_info = $this->sysInfo();
-        $this->assign('sys_info',$sys_info);
-        return $this->fetch();
-    }
-
-
-
-    public function login()
+    public function Login()
     {
-        if($this->isLogin()){
-            $this->error('you have logged in','admin/index/index');
+        if($this->is_login()){
+            $this->api_error('you have logged in');
         }
         if($this->request->isPost()){
             $data = input('post.');
-            //validate form data
             $validate = $this->validate($data, 'app\admin\validate\AdminUser');
             if($validate !== true){
-                return $this->apiError($validate);
+                return $this->api_error($validate);
             }
             if($data['captcha']){
                 // TODO: validate captcha
                 if(!$this->verify($data['captcha'])){
-                    return $this->apiError('验证码错误');
+                    return $this->api_error('验证码错误');
                 }
             }
 
             $admin = User::get(['username' => $data['username']]);
             if(!$admin['status']){
-                return $this->apiError('该账户已被冻结');
+                return $this->api_error('该账户已被冻结');
             }
             if($admin['username']){
                 if($admin['password'] == encrypt_pwd($data['password'],$admin['salt'])){
@@ -65,24 +53,22 @@ class Index extends AdminBase
                     $admin->login_failure = 0;
                     $admin->login_time = time();
                     $admin->save();
-                    return $this->apiSuccess('登录成功！');
+                    return $this->api_success('登录成功！');
                 }else{
                     $admin->login_failure++;
                     $admin->save();
-                    return $this->apiError('用户名或者密码错误');
+                    return $this->api_error('用户名或者密码错误');
                 }
             }else{
-                return $this->apiError('用户名或者密码错误');
+                return $this->api_error('用户名或者密码错误');
             }
         }
-        $this->assign('title','登录');
-        return $this->fetch();
     }
 
 
     public function logout(){
         Session::delete('admin');
-        return $this->apiSuccess('登出成功！',"admin/index/login");
+        return $this->success('you have logged out','admin/index/login');
     }
 
 
