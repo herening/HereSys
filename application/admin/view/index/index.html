@@ -4,6 +4,11 @@
         <div class="layui-logo">{$title|default='系统管理'}</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item layadmin-flexible" lay-unselect="">
+                <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+                    <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+                </a>
+            </li>
             {volist name="nav" id="vo"}
             <li class="layui-nav-item"><a href="{$vo.url}">{$vo.title}</a></li>
             {/volist}
@@ -32,7 +37,7 @@
                     {if $vo.childlist != null}
                     <dl class="layui-nav-child">
                         {volist name="$vo['childlist']" id="child"}
-                        <dd><a href="javascript:;" lay-data="{$child.url}">{$child.title}</a></dd>
+                        <dd><a href="{$child.url}" lay-data="{$child.url}">{$child.title}</a></dd>
                         {/volist}
                     </dl>
                     {/if}
@@ -63,6 +68,7 @@
 </div>
 </div>
 {include file="common/footer" /}
+<script src="__STATIC__/admin/js/index.js?v={$Think.config.system.version}"></script>
 <script>
     layui.use(['element', 'layer'], function(){
 
