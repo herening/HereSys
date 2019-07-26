@@ -21,7 +21,9 @@
                 <dl class="layui-nav-child">
                     <dd><a href="">基本资料</a></dd>
                     <dd><a href="">安全设置</a></dd>
-                    <dd><a class="login-out">退出</a></dd>
+                    <dd><a class="login-out here-pointer">退出</a></dd>
+                    <dd><a class="cache-clear here-pointer" >清空缓存</a></dd>
+
                 </dl>
             </li>
         </ul>
@@ -37,7 +39,7 @@
                     {if $vo.childlist != null}
                     <dl class="layui-nav-child">
                         {volist name="$vo['childlist']" id="child"}
-                        <dd><a href="{$child.url}" lay-data="{$child.url}">{$child.title}</a></dd>
+                        <dd><a class="here-pointer" lay-data="{$child.url}">{$child.title}</a></dd>
                         {/volist}
                     </dl>
                     {/if}
@@ -56,7 +58,7 @@
             </ul>
             <div class="layui-tab-content" >
                 <div class="layui-tab-item layui-show" >
-                    <iframe src="{:url('admin/index/info')}"></iframe>
+                    <iframe src="{:url('index/info')}"></iframe>
                 </div>
             </div>
         </div>
@@ -68,16 +70,16 @@
 </div>
 </div>
 {include file="common/footer" /}
-<script src="__STATIC__/admin/js/index.js?v={$Think.config.system.version}"></script>
+<!--<script src="__STATIC__/admin/js/index.js?v={$Think.config.system.version}"></script>-->
 <script>
     layui.use(['element', 'layer'], function(){
 
         var layer = layui.layer,
             element = layui.element,
-            $ = layui.jquery;
+            $ = layui.jquery, loading;
 
         $('.login-out').click( function () {
-            loading =layer.load(1, {shade: [0.1,'#fff'] });//0.1透明度的白色背景
+            var loading = layer.load(1, {shade: [0.1, '#fff']});//0.1透明度的白色背景
             $.post('{:url("index/logout")}',function(res){
                 layer.close(loading);
                 if(res.code == 200){
@@ -89,6 +91,24 @@
                 }
             });
         });
+        $('.cache-clear').click(function () {
+            loading = layer.load(1, {shade: [0.1,'#fff'] });
+            $.post('{:url("index/clearCache")}', function (res) {
+                layer.close(loading);
+                if(res.code == 200){
+                    layer.msg(res.msg);
+                }else{
+                    layer.msg(res.msg);
+                }
+            })
+        });
+
+        $('.layui-nav-child a').on('click', function () {
+   /*         var myUrl =  $(this).val('lay-data');
+            console.info(myUrl);*/
+            $('.layui-tab-item iframe').attr('src', $(this).attr('lay-data'));
+        });
+
         $('.layui-nav-tree li:first').addClass('layui-nav-itemed');
         element.on('nav(filter)', function(elem){
             console.log(elem); //得到当前点击的DOM对象

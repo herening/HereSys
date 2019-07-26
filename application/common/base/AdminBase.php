@@ -89,6 +89,16 @@ class AdminBase extends Controller
         return json($result);
     }
 
+    public function apiTable($code = 0, $data = [], $msg= '', $count = '' ){
+        $result = [
+            'code' => $code,
+            'data' => $data,
+            'count' => $count,
+            'msg'  => $msg,
+        ];
+        return json($result);
+    }
+
     public function verify($code){
         return captcha_check($code);
     }

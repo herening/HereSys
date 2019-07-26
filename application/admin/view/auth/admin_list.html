@@ -1,0 +1,60 @@
+{include file="common/header" /}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <table class="layui-table" id="list" lay-filter="list"></table>
+</div>
+
+<script type="text/html" id="switch">
+    {{# if(d.id==1){ }}
+    <input type="checkbox" disabled name="is_open" value="{{d.id}}" lay-skin="switch" lay-text="开启|关闭" lay-filter="open" checked>
+    {{# }else{  }}
+    <input type="checkbox" name="is_open" value="{{d.id}}" lay-skin="switch" lay-text="开启|关闭" lay-filter="open" {{ d.status == 1 ? 'checked' : '' }}>
+    {{# } }}
+</script>
+
+{include file="common/footer" /}
+
+
+<script>
+    layui.use(['table', 'form'], function () {
+        var table = layui.table, form = layui.form, $ = layui.jquery;
+        var tableIn = table.render({
+            elem: '#list',
+            url: '{:url("auth/adminList")}',
+            method:'post',
+            toolbar: '#topBtn',
+            title:'{$title}',
+            cols: [[
+                {field:'id', title: '编号', width:60,fixed: true}
+                ,{field:'nickname', title: '用户名', width:80}
+                ,{field:'group_id', title: '用户组', width:200}
+                ,{field:'email', title: '邮箱', width:200}
+                ,{field:'tel', title: '{:lang("tel")}', width:150}
+                ,{field:'ip', title: '{:lang("ip")}',width:150,hide:true}
+                ,{field:'status', title: '{:lang("status")}',width:150,toolbar: '#switch'}
+                ,{width:160, align:'center', toolbar: '#barDemo'}
+            ]]
+        });
+        form.on('switch(open)', function(obj){
+            var loading =layer.load(1, {shade: [0.1,'#fff']});
+            var id = this.value;
+            var is_open = obj.elem.checked===true?1:0;
+            $.post('{:url("adminStatusSwitch")}',{'id':id,'is_open':is_open},function (res) {
+                layer.close(loading);
+                if (res.code==200) {
+                    tableIn.reload();
+                }else{
+                    layer.msg(res.msg,{time:1000,icon:2});
+                    //return false;
+                }
+            })
+        });
+        
+    })
+</script>
+
+</body>
+</html>

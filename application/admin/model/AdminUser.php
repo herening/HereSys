@@ -20,4 +20,15 @@ class AdminUser extends Model
 {
     protected $autoWriteTimestamp = true;
     protected $table = 'here_admin';
+
+    public function getGroupIdAttr($value){
+        $groupList = AuthGroup::where('status', 1)->select();
+        $match = [];
+        if($groupList){
+            foreach ($groupList as $val){
+                $match[$val['group_id']] = $val['title'];
+            }
+        }
+        return $match[$value];
+    }
 }

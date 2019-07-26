@@ -16,6 +16,7 @@ namespace app\admin\controller;
 use app\admin\validate\AdminUser;
 use app\common\base\AdminBase;
 use app\admin\model\AdminUser as User;
+use think\facade\Cache;
 use think\facade\Session;
 
 class Index extends AdminBase
@@ -64,6 +65,7 @@ class Index extends AdminBase
                     Session::set('admin', $admin->toArray());
                     $admin->login_failure = 0;
                     $admin->login_time = time();
+                    $admin->ip = $this->request->ip();
                     $admin->save();
                     return $this->apiSuccess('登录成功！');
                 }else{
@@ -82,7 +84,7 @@ class Index extends AdminBase
 
     public function logout(){
         Session::delete('admin');
-        return $this->apiSuccess('登出成功！',"admin/index/login");
+        return $this->apiSuccess('登出成功！',"index/login");
     }
 
 
@@ -122,6 +124,17 @@ class Index extends AdminBase
 
     public function demo(){
         return 22222;
+    }
+
+    public function clearCache(){
+        if($this->request->isPost()){
+            $result = Cache::clear();
+            if($result){
+                return $this->apiSuccess('清除缓存成功');
+            }else{
+                return $this->apiError('未知错误！');
+            }
+        }
     }
 
 
