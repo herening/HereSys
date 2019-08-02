@@ -7,6 +7,8 @@
     <table class="layui-table" id="list" lay-filter="list"></table>
 </div>
 
+{include file="common/footer" /}
+
 <script type="text/html" id="switch">
     {{# if(d.id==1){ }}
     <input type="checkbox" disabled name="is_open" value="{{d.id}}" lay-skin="switch" lay-text="开启|关闭" lay-filter="open" checked>
@@ -15,8 +17,9 @@
     {{# } }}
 </script>
 
-{include file="common/footer" /}
-
+<script type="text/html" id="topBtn">
+    <button class="layui-btn layui-btn-warm" data-type="add" >添加</button>
+</script>
 
 <script>
     layui.use(['table', 'form'], function () {
@@ -29,22 +32,25 @@
             title:'{$title}',
             cols: [[
                 {field:'id', title: '编号', width:60,fixed: true}
-                ,{field:'nickname', title: '用户名', width:80}
-                ,{field:'group_id', title: '用户组', width:200}
+                ,{field:'username', title: '用户名', width:80}
+                ,{field:'group_id', title: '用户组', width:100}
                 ,{field:'email', title: '邮箱', width:200}
                 ,{field:'tel', title: '{:lang("tel")}', width:150}
                 ,{field:'ip', title: '{:lang("ip")}',width:150,hide:true}
+                ,{field:'login_time', title: '上次登录时间',width:200}
                 ,{field:'status', title: '{:lang("status")}',width:150,toolbar: '#switch'}
                 ,{width:160, align:'center', toolbar: '#barDemo'}
             ]]
         });
+
+
         form.on('switch(open)', function(obj){
             var loading =layer.load(1, {shade: [0.1,'#fff']});
             var id = this.value;
             var is_open = obj.elem.checked===true?1:0;
             $.post('{:url("adminStatusSwitch")}',{'id':id,'is_open':is_open},function (res) {
                 layer.close(loading);
-                if (res.code==200) {
+                if (res.code === 200) {
                     tableIn.reload();
                 }else{
                     layer.msg(res.msg,{time:1000,icon:2});
@@ -52,8 +58,47 @@
                 }
             })
         });
-        
-    })
+
+
+        var active = {
+            add : function () {
+                layer.open({
+                    type: 2
+                    ,title: '添加管理员'
+                    ,content: '{:url("adminAdd")}'
+                    ,area: ['420px', '420px']
+                    ,maxmin:true
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submit = layero.find('iframe').contents().find('#LAY-user-back-submit');
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(LAY-user-front-submit)', function(data){
+                            var field = data.field; //获取提交的字段
+                            field.status  = field.status==='on'?1:0;
+                            //提交 Ajax 成功后，静态更新表格中的数据
+                            $.post('{:url("adminAdd")}', field, function (res) {
+                                if (res.code === 200) {
+                                    tableIn.reload();//table.reload('list'); //数据刷新
+                                    layer.close(index); //关闭弹层
+                                }else{
+                                    return false;
+                                }
+                            });
+
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            }
+        };
+
+        $('.layui-btn.layui-btn-warm').on('click',function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+    });
 </script>
 
 </body>

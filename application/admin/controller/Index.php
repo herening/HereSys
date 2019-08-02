@@ -13,7 +13,6 @@
 
 namespace app\admin\controller;
 
-use app\admin\validate\AdminUser;
 use app\common\base\AdminBase;
 use app\admin\model\AdminUser as User;
 use think\facade\Cache;
@@ -85,40 +84,6 @@ class Index extends AdminBase
     public function logout(){
         Session::delete('admin');
         return $this->apiSuccess('登出成功！',"index/login");
-    }
-
-
-    public function addUser()
-    {
-        if($this->request->isPost()){
-            $username = $this->request->post('username');
-            $password = $this->request->post('password');
-
-            $data = [
-                'username' => $username,
-                'password' => $password,
-            ];
-            $validate = new AdminUser();
-            $result = $validate->check($data);
-            if(!$result){
-                dump($validate->getError());
-            }else{
-                $adminInfo  =  User::get(['username' => $username]);
-                if($adminInfo){
-                    $this->error('用户名已存在','admin/index/adduser');
-                }else{
-                    $salt = create_salt(6);
-                    $pwd = encrypt_pwd($password,$salt);
-                    $data['salt'] = $salt;
-                    $data['password'] = $pwd;
-                    $user = User::create($data);
-                    if($user->id){
-                        $this->success('创建成功！', 'admin/index/Login');
-                    }
-                }
-            }
-        }
-        return $this->fetch();
     }
 
 

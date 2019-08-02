@@ -31,4 +31,8 @@ class AdminUser extends Model
         }
         return $match[$value];
     }
+
+    public function getLoginTimeAttr($value){
+        return date(config('database.datetime_format'),$value);
+    }
 }

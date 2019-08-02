@@ -16,15 +16,13 @@ namespace app\admin\controller;
 
 use app\admin\model\AdminUser;
 use app\common\base\AdminBase;
-use think\facade\Request;
 
 class Auth extends AdminBase
 {
 
     public function adminList(){
-        if(Request::isAjax()){
-            $userList = AdminUser::where('status', '=', 1)->select()->toArray();
-            mydebug($userList);
+        if($this->request->isPost()){
+            $userList = AdminUser::where('status',  1)->select()->toArray();
             if($userList){
                 return $this->apiTable(0,  $userList);
             }
@@ -37,11 +35,52 @@ class Auth extends AdminBase
         if($this->request->isPost()){
             $id = input('post.id');
             $is_open = input('post.is_open');
+
             if(!$id){
                 $this->apiError('用户不存在');
             }
             AdminUser::where('id', $id)->update(['status' => $is_open]);
-            $this->apiSuccess();
+            return $this->apiSuccess();
         }
+    }
+
+
+    public function adminAdd()
+    {
+        if($this->request->isPost()){
+            $data = input('post.');
+            $username = $data['username'];
+            if(empty($data['password']) || !isset($data['password'])){
+                $password = '111111';
+            }else{
+                $password = $data['password'];
+            }
+            $check_data = [
+                'username' => $username,
+                'password' => $password,
+            ];
+            $validate = $this->validate($check_data, 'app\admin\validate\AdminUser');
+            if(!$validate){
+                return $this->apiError($validate->getError());
+            }else{
+                $adminInfo  =  AdminUser::get(['username' => $username]);
+                if($adminInfo){
+                    return $this->apiError('用户名已存在');
+                }else{
+                    $salt = create_salt(6);
+                    $pwd = encrypt_pwd($password,$salt);
+                    $data['salt'] = $salt;
+                    $data['password'] = $pwd;
+                    $user = AdminUser::create($data);
+                    if($user->id){
+                        return $this->apiSuccess('创建成功！');
+                    }
+                }
+            }
+        }else{
+
+            return $this->fetch();
+        }
+
     }
 }
