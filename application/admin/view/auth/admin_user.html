@@ -19,6 +19,7 @@
             <input type="text" name="email" lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
         </div>
     </div>
+
     <div class="layui-form-item">
         <label class="layui-form-label">角色</label>
         <div class="layui-input-inline">
@@ -36,16 +37,58 @@
             <input type="checkbox" lay-filter="switch" name="status"  lay-skin="switch" lay-text="启用|关闭" checked>
         </div>
     </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">头像</label>
+        <div class="layui-input-inline">
+            <div class="layui-upload">
+                <button type="button" class="layui-btn " id="upload-avatar"><i class="icon icon-upload3"></i>上传头像</button>
+                <div class="layui-upload-list">
+                    <img class="layui-upload-img" id="show-img">
+                    <p id="demoText"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="layui-form-item layui-hide">
         <input type="button" lay-submit="" lay-filter="LAY-user-front-submit" id="LAY-user-back-submit" value="确认">
     </div>
 </div>
 {include file="common/footer" /}
 <script>
-    layui.use(['form', 'layer'], function () {
-        var form = layui.form ,$ = layui.jquery, layer = layui.layer;
-    });
+    layui.use(['form', 'layer', 'upload'], function () {
+        var form = layui.form ,$ = layui.jquery, layer = layui.layer, upload = layui.upload;
 
+        var uploadInst = upload.render({
+            elem: '#upload-avatar'
+            ,url: '{:url("HereUpload/uploadImg")}'
+            ,accept: 'images'
+            ,before: function(obj){
+                obj.preview(function(index, file, result){
+                    $('#show-img').attr('src', result);
+                });
+            },
+            done: function(res){
+                if(res.code===200){
+                    console.log(res);
+                    $(".layui-upload-file").val(res.url);
+                }else{
+                    //如果上传失败
+                    return layer.msg(res.msg);
+                }
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+
+    });
 </script>
 </body>
 </html>
