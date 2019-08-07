@@ -18,6 +18,7 @@ return[
     // view type of back  template mvc | api mvvm
     'view_type' => 'template',
     'captcha' => 1,
-    'upload_path' => Env::get('root_path').'public/static/uploads/admin',
+    'upload_path' => Env::get('root_path').'public/uploads/admin',
     'img_ext' => 'jpg,png,gif,jpeg',
+    'extra_path' => 'uploads/admin/',
 ];

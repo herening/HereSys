@@ -8,6 +8,12 @@
         </div>
     </div>
     <div class="layui-form-item">
+        <label class="layui-form-label">密码</label>
+        <div class="layui-input-inline">
+            <input type="text" name="password"  placeholder="请输入密码" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
         <label class="layui-form-label">手机</label>
         <div class="layui-input-inline">
             <input type="text" name="tel" lay-verify="phone" placeholder="请输入号码" autocomplete="off" class="layui-input">
@@ -40,6 +46,7 @@
 
     <div class="layui-form-item">
         <label class="layui-form-label">头像</label>
+        <input type="hidden" name="avatar" class="layui-input" id="avatar">
         <div class="layui-input-inline">
             <div class="layui-upload">
                 <button type="button" class="layui-btn " id="upload-avatar"><i class="icon icon-upload3"></i>上传头像</button>
@@ -71,8 +78,8 @@
             },
             done: function(res){
                 if(res.code===200){
-                    console.log(res);
-                    $(".layui-upload-file").val(res.url);
+                    //console.log(res);
+                    $("#avatar").val(res.data.path);
                 }else{
                     //如果上传失败
                     return layer.msg(res.msg);

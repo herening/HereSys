@@ -16,7 +16,7 @@
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
-                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">{$Think.config.app.app_name}
+                    <img src="{:session('admin.avatar')}" class="layui-nav-img">{:session('admin.username')}
                 </a>
                 <dl class="layui-nav-child">
                     <dd><a href="">基本资料</a></dd>
@@ -58,7 +58,7 @@
             </ul>
             <div class="layui-tab-content" >
                 <div class="layui-tab-item layui-show" >
-                    <iframe src="{:url('index/info')}"></iframe>
+                    <iframe src="{:url('admin/index/info')}"></iframe>
                 </div>
             </div>
         </div>
@@ -104,8 +104,6 @@
         });
 
         $('.layui-nav-child a').on('click', function () {
-   /*         var myUrl =  $(this).val('lay-data');
-            console.info(myUrl);*/
             $('.layui-tab-item iframe').attr('src', $(this).attr('lay-data'));
         });
 

@@ -18,7 +18,7 @@
 </script>
 
 <script type="text/html" id="topBtn">
-    <button class="layui-btn layui-btn-warm" lay-event="add" >添加</button>
+    <button class="layui-btn layui-btn-warm" data-type="add" >添加</button>
 </script>
 
 <script type="text/html" id="operate">
@@ -41,8 +41,6 @@
             toolbar: '#topBtn',
             title:'{$title}',
             //id :'user-list',
-            page:true,
-            limit: 10,
             cols: [[
                 {field:'id', title: '编号', width:60,fixed: true}
                 ,{field:'username', title: '用户名', width:80}
@@ -108,14 +106,8 @@
             } else if(layEvent === 'del'){ //删除
                 layer.confirm('真的删除行么', function(index){
                     obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
-
+                    layer.close(index);
                     //向服务端发送删除指令
-                    $.post('{:url("adminDel")}', {'id':data.id}, function (res) {
-                        if(res.code === 200){
-                            layer.msg(res.msg);
-                            layer.close(index);
-                        }
-                    })
                 });
             } else if(layEvent === 'edit'){ //编辑
                 //do something
@@ -146,7 +138,7 @@
                             //提交 Ajax 成功后，静态更新表格中的数据
                             $.post('{:url("adminEdit")}', field, function (res) {
                                 if (res.code === 200) {
-                                    table.reload('user-list');//table.reload('list'); //数据刷新
+                                    tableIn.reload();//table.reload('list'); //数据刷新
                                     layer.close(index);//关闭弹层
                                 }else{
                                     return false;
@@ -167,10 +159,8 @@
 
         });
 
-        table.on('toolbar(list)', function (obj) {
-            var layEvent = obj.event;
-            //console.log(layEvent);
-            if(layEvent === 'add'){
+        var active = {
+            add : function () {
                 layer.open({
                     type: 2
                     ,title: '添加管理员'
@@ -188,8 +178,8 @@
                             //提交 Ajax 成功后，静态更新表格中的数据
                             $.post('{:url("adminAdd")}', field, function (res) {
                                 if (res.code === 200) {
-                                    tableIn.reload();//table.reload('list'); //数据刷新
                                     layer.close(index); //关闭弹层
+                                    tableIn.reload();//table.reload('list'); //数据刷新
                                 }else{
                                     return false;
                                 }
@@ -199,7 +189,12 @@
                         submit.trigger('click');
                     }
                 });
-            };
+            }
+        };
+
+        $('.layui-btn.layui-btn-warm').on('click',function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
         });
 
     });

@@ -23,9 +23,16 @@ class Auth extends AdminBase
 
     public function adminList(){
         if($this->request->isPost()){
-            $userList = AdminUser::with('authGroup')->where('status',  1)->hidden(['password', 'salt', 'token'])->select()->toArray();
+            $limit = input('post.limit');
+            $page = input('post.page');
+            $userList = AdminUser::with('authGroup')
+                ->where('status',  1)
+                ->paginate($limit, false,['page'=>$page])
+                ->hidden(['password', 'salt', 'token'])
+                /*->select()*/
+                ->toArray();
             if($userList){
-                return $this->apiTable(0,  $userList);
+                return $this->apiTable(0,  $userList['data'],'', $userList['total']);
             }
         }
         $this->assign('title', '管理员列表');
@@ -42,6 +49,16 @@ class Auth extends AdminBase
             }
             AdminUser::where('id', $id)->update(['status' => $is_open]);
             return $this->apiSuccess();
+        }
+    }
+
+    public function adminDel(){
+        if($this->request->isPost()){
+            $id = input('post.id/i');
+            if($id){
+                AdminUser::where('id',$id)->delete();
+            }
+            return $this->apiSuccess('删除成功！');
         }
     }
 
@@ -68,10 +85,8 @@ class Auth extends AdminBase
                 if($adminInfo){
                     return $this->apiError('用户名已存在');
                 }else{
-                    $salt = create_salt(6);
-                    $pwd = encrypt_pwd($password,$salt);
-                    $data['salt'] = $salt;
-                    $data['password'] = $pwd;
+                    $data['salt'] = create_salt(6);
+                    $data['password'] = encrypt_pwd($password,$data['salt']);
                     $user = AdminUser::create($data);
                     if($user->id){
                         return $this->apiSuccess('创建成功！');
@@ -79,53 +94,53 @@ class Auth extends AdminBase
                 }
             }
         }else{
-            $groups = AuthGroup::where('status',1)->select();
+            $groups = $this->getGroups();
             $this->assign('groups', $groups);
             return $this->fetch('admin_user');
         }
     }
 
 
+
     public function adminEdit(){
         if($this->request->isPost()){
             $data = input('post.');
             $username = $data['username'];
-            if(empty($data['password']) || !isset($data['password'])){
-                $password = '111111';
-            }else{
-                $password = $data['password'];
+            $check_data['username'] = $username;
+            if($data['password']){
+                $check_data['password'] = $data['password'];
             }
-            $check_data = [
-                'username' => $username,
-                'password' => $password,
-            ];
             $validate = $this->validate($check_data, 'app\admin\validate\AdminUser');
             if(!$validate){
                 return $this->apiError($validate->getError());
             }else{
-                $adminInfo  =  AdminUser::get(['username' => $username]);
+                $where[] = ['username', '=', $username];
+                $where[] = ['id', '<>', $data['id']];
+                $adminInfo  =  AdminUser::where($where)->find();
                 if($adminInfo){
                     return $this->apiError('用户名已存在');
                 }else{
-                    $salt = create_salt(6);
-                    $pwd = encrypt_pwd($password,$salt);
-                    $data['salt'] = $salt;
-                    $data['password'] = $pwd;
-                    $user = AdminUser::create($data);
+                    if($data['password']){
+                        $data['salt'] = create_salt(6);
+                        $data['password'] = encrypt_pwd($data['password'],$data['salt']);
+                    }else{
+                        unset($data['password']);
+                    }
+                    $user = AdminUser::update($data);
                     if($user->id){
-                        return $this->apiSuccess('创建成功！');
+                        return $this->apiSuccess('更新成功！');
                     }
                 }
             }
-
         }else{
-            $admin_id = input('id/d');
-            $groups = AuthGroup::where('status',1)->select();
-            $admin = AdminUser::get($admin_id);
-            $this->assign('admin',json_encode($admin,true));
+            $groups = $this->getGroups();
             $this->assign('groups',$groups);
             return $this->fetch('admin_user');
         }
+    }
+
+    public function getGroups(){
+        return AuthGroup::where('status',1)->select()->toArray();
     }
 
 
