@@ -25,16 +25,35 @@ class Auth extends AdminBase
         if($this->request->isPost()){
             $limit = input('post.limit');
             $page = input('post.page');
+            $where = ['status' => 1];
+            if($id = input('post.id/d')){
+                $id = ['id' => $id];
+                $where+=$id;
+            }
+            if($username = input('post.username/s')){
+                $username = ['username' => $username];
+                $where+=$username;
+            }
+            if($email = input('post.email/s', '', FILTER_VALIDATE_EMAIL)) {
+                $email = ['email' => $email];
+                $where+=$email;
+            }
+            if($group_id = input('post.group_id/d')){
+                $group_id = ['group_id' => $group_id];
+                $where+=$group_id;
+            }
+
             $userList = AdminUser::with('authGroup')
-                ->where('status',  1)
+                ->where($where)
                 ->paginate($limit, false,['page'=>$page])
                 ->hidden(['password', 'salt', 'token'])
-                /*->select()*/
                 ->toArray();
             if($userList){
                 return $this->apiTable(0,  $userList['data'],'', $userList['total']);
             }
         }
+        $groups = $this->getGroups();
+        $this->assign('groups', $groups);
         $this->assign('title', '管理员列表');
         return $this->fetch();
     }

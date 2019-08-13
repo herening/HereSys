@@ -15,7 +15,7 @@ namespace app\common\base;
 
 
 use app\admin\model\AuthGroup;
-use app\admin\model\AuthMenu;
+use app\admin\model\AuthRule;
 use here\Tree;
 use think\Controller;
 //use think\facade\Hook;
@@ -55,10 +55,10 @@ class AdminBase extends Controller
     public function getAuths($group_id){
         $auths = AuthGroup::get($group_id);
         $auth_array = explode(',', $auths['auths']);
-        $menu_list = AuthMenu::where(['status' => 1, 'id' => $auth_array])
+        $menu_list = AuthRule::where(['status' => 1, 'id' => $auth_array])
                      ->where('type', '>', 0)
                      ->column('id, title, pid, url');  //column output array
-        $nav = AuthMenu::where(['status' => 1, 'pid' => 0, 'type' => 0 ])->order('sort', 'ASC' )->select()->toArray();
+        $nav = AuthRule::where(['status' => 1, 'pid' => 0, 'type' => 0 ])->order('sort', 'ASC' )->select()->toArray();
         foreach ($nav as $key => $val){
             if(!in_array($val['id'], $auth_array)){
                 unset($nav[$key]);
