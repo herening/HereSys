@@ -1,0 +1,138 @@
+{include file="common/header" /}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <table class="layui-table" id="group_list" lay-filter="group_list"></table>
+</div>
+
+{include file="common/footer" /}
+<script src="__STATIC__/admin/js/admin.js?v={$Think.config.system.version}"></script>
+<script type="text/html" id="topBtn">
+    <button class="layui-btn layui-btn-warm" lay-event="add" >添加</button>
+</script>
+
+<script type="text/html" id="operate">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    {{# if(d.group_id==1){ }}
+    <a class="layui-btn layui-btn-xs layui-btn-disabled">删除</a>
+    {{# }else{  }}
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    {{# } }}
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="rules">权限配置</a>
+</script>
+
+
+<script>
+    layui.use(['table', 'form', 'layer','helper'], function () {
+        var table = layui.table, form = layui.form, $ = layui.jquery, layer = layui.layer, helper = layui.helper;
+        var tableIn = table.render({
+            elem: '#group_list',
+            url: '{:url("auth/groupList")}',
+            method:'post',
+            toolbar: '#topBtn',
+            title:'{$title}',
+            page:true,
+            limit: 10,
+            cols: [[
+                {field:'group_id', title: '编号', width:60,fixed: true}
+                ,{field:'group_name', title: '权限组名', width:150}
+                ,{width:200, align:'center', toolbar: '#operate'}
+            ]]
+        });
+
+        table.on('tool(group_list)', function (obj) {
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+            if(layEvent === 'rules'){
+
+                //do something
+            } else if(layEvent === 'del'){ //删除
+                layer.confirm('真的删除行么', function(index){
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+
+                    //向服务端发送删除指令
+                    $.post('{:url("groupDel")}', {'group_id':data.group_id}, function (res) {
+                        if(res.code === 200){
+                            layer.msg(res.msg);
+                            layer.close(index);
+                        }
+                    })
+                });
+            } else if(layEvent === 'edit'){ //编辑
+                //do something
+                layer.open({
+                    type: 2,
+                    title: '编辑权限组',
+                    content: '{:url("groupEdit")}',
+                    area: ['420px', '200px'],
+                    maxmin:true,
+                    btn: ['确定', '取消'],
+                    success: function(layero, index){
+                        var div = layero.find('iframe').contents().find('#group_form');
+                        helper.setForm(div, data);  //表单赋值
+                    },
+                    yes : function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submit = layero.find('iframe').contents().find('#group_submit');
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(group_submit)', function(form_data){
+                            var field = form_data.field; //获取提交的字段
+                            field.group_id = data.group_id;
+                            //提交 Ajax 成功后，静态更新表格中的数据
+                            $.post('{:url("groupEdit")}', field, function (res) {
+                                if (res.code === 200) {
+                                    table.reload('group_list');//table.reload('list'); //数据刷新
+                                    layer.close(index);//关闭弹层
+                                }else{
+                                    return false;
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            }
+        });
+
+        table.on('toolbar(group_list)', function (obj) {
+            var layEvent = obj.event;
+            if(layEvent === 'add'){
+                layer.open({
+                    type: 2
+                    ,title: '添加管理员'
+                    ,content: '{:url("groupAdd")}'
+                    ,area: ['420px', '200px']
+                    ,maxmin:true
+                    ,btn: ['确定', '取消']
+                    ,yes: function(index, layero){
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submit = layero.find('iframe').contents().find('#group_submit');
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(group_submit)', function(data){
+                            var field = data.field; //获取提交的字段
+                            //提交 Ajax 成功后，静态更新表格中的数据
+                            $.post('{:url("groupAdd")}', field, function (res) {
+                                if (res.code === 200) {
+                                    tableIn.reload();//table.reload('list'); //数据刷新
+                                    layer.close(index); //关闭弹层
+                                    layer.msg(res.msg);
+                                }else{
+                                    return false;
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            };
+        });
+
+    });
+</script>
+
+</body>
+</html>

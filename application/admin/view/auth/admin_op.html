@@ -32,7 +32,7 @@
             <select name="group_id" lay-verify="required">
                 <option value="">请选择用户组</option>
                 {volist name="groups" id="vo"}
-                <option value="{$vo.group_id}">{$vo.title}</option>
+                <option value="{$vo.group_id}">{$vo.group_name}</option>
                 {/volist}
             </select>
         </div>

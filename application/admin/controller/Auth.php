@@ -25,7 +25,7 @@ class Auth extends AdminBase
         if($this->request->isPost()){
             $limit = input('post.limit');
             $page = input('post.page');
-            $where = ['status' => 1];
+            $where = [];
             if($id = input('post.id/d')){
                 $id = ['id' => $id];
                 $where+=$id;
@@ -49,7 +49,7 @@ class Auth extends AdminBase
                 ->hidden(['password', 'salt', 'token'])
                 ->toArray();
             if($userList){
-                return $this->apiTable(0,  $userList['data'],'', $userList['total']);
+                return $this->apiTable($userList['data'], 0 ,'', $userList['total']);
             }
         }
         $groups = $this->getGroups();
@@ -68,16 +68,6 @@ class Auth extends AdminBase
             }
             AdminUser::where('id', $id)->update(['status' => $is_open]);
             return $this->apiSuccess();
-        }
-    }
-
-    public function adminDel(){
-        if($this->request->isPost()){
-            $id = input('post.id/i');
-            if($id){
-                AdminUser::where('id',$id)->delete();
-            }
-            return $this->apiSuccess('删除成功！');
         }
     }
 
@@ -115,11 +105,19 @@ class Auth extends AdminBase
         }else{
             $groups = $this->getGroups();
             $this->assign('groups', $groups);
-            return $this->fetch('admin_user');
+            return $this->fetch('admin_op');
         }
     }
 
-
+    public function adminDel(){
+        if($this->request->isPost()){
+            $id = input('post.id/i');
+            if($id){
+                AdminUser::where('id',$id)->delete();
+            }
+            return $this->apiSuccess('删除成功！');
+        }
+    }
 
     public function adminEdit(){
         if($this->request->isPost()){
@@ -154,7 +152,7 @@ class Auth extends AdminBase
         }else{
             $groups = $this->getGroups();
             $this->assign('groups',$groups);
-            return $this->fetch('admin_user');
+            return $this->fetch('admin_op');
         }
     }
 
@@ -162,6 +160,48 @@ class Auth extends AdminBase
         return AuthGroup::where('status',1)->select()->toArray();
     }
 
+    public function groupList(){
+        if($this->request->isPost()){
+            return $this->apiTable($this->getGroups());
+        }
+        $this->assign('title', '权限组列表');
+        return $this->fetch();
+    }
+
+    public function groupAdd(){
+        if($this->request->isPost()){
+            $data = input('post.');
+            if($data){
+                AuthGroup::create($data,['group_name']);
+                return $this->apiSuccess('添加成功');
+            }
+        }
+
+        return $this->fetch('group_op');
+    }
+    public function groupDel(){
+        if($this->request->isPost()){
+            $group_id = input('post.group_id/d');
+            if($group_id){
+                AuthGroup::destroy($group_id);
+                return $this->apiSuccess('删除成功');
+            }
+        }
+    }
+
+    public function groupEdit(){
+        if($this->request->isPost()){
+            $data = input('post.');
+            if($data['group_id'] && $data['group_name']){
+                AuthGroup::update($data);
+                return $this->apiSuccess();
+            }else{
+                return $this->apiError();
+            }
+
+        }
+        return $this->fetch('group_op');
+    }
 
 
 

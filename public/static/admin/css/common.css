@@ -40,13 +40,13 @@
 	margin: 0;
 }
 
-.layui-tab-item{
+.layui-tab-item.layui-show{
 	position: absolute;
 	top: 55px;
 	bottom: 0;
 	left: 0;
 	right: 0;
-	padding: 0;
+	padding: 10px;
 	margin: 0;
 }
 
@@ -58,6 +58,7 @@
 .admin-main {
 	padding: 15px;
 	position: relative;
+	background-color: #ffffff;
 }
 
 .layui-card-header {

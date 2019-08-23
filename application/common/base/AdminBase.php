@@ -65,7 +65,7 @@ class AdminBase extends Controller
             }
         }
 
-        $tree = Tree::instance()->init($menu_list);
+        $tree = Tree::getInstance()->init($menu_list);
         $menus = $tree->getTreeArray(1);  //$tree->getTreeList($tree->getTreeArray(1))
         $this->assign('nav', $nav);
         $this->assign('menus', $menus);
@@ -89,7 +89,7 @@ class AdminBase extends Controller
         return json($result);
     }
 
-    public function apiTable($code = 0, $data = [], $msg= '', $count = '' ){
+    public function apiTable( $data = [], $code = 0, $msg= '', $count = '' ){
         $result = [
             'code' => $code,
             'data' => $data,

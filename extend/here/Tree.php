@@ -8,7 +8,7 @@ namespace here;
 class Tree
 {
 
-    protected static $instance;
+    private static $instance;
     //默认配置
     protected $config = [];
     public $options = [];
@@ -27,7 +27,7 @@ class Tree
     public $nbsp = '';  //"&nbsp;"
     public $pidname = 'pid';
 
-    public function __construct($options = [])
+    private function __construct($options = [])
     {
         if ($config = config('tree'))
         {
@@ -42,7 +42,7 @@ class Tree
      * @param array $options 参数
      * @return Tree
      */
-    public static function instance($options = [])
+    public static function getInstance($options = [])
     {
         if (is_null(self::$instance))
         {

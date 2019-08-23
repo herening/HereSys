@@ -31,7 +31,7 @@
                     <select name="group_id">
                         <option value="">不限</option>
                         {volist name="groups" id="vo"}
-                        <option value="{$vo.group_id}">{$vo.title}</option>
+                        <option value="{$vo.group_id}">{$vo.group_name}</option>
                         {/volist}
                     </select><div class="layui-unselect layui-form-select"><div class="layui-select-title"><input type="text" placeholder="请选择" value="不限" readonly="" class="layui-input layui-unselect"><i class="layui-edge"></i></div><dl class="layui-anim layui-anim-upbit" style=""><dd lay-value="0" class="layui-this">不限</dd><dd lay-value="1" class="">男</dd><dd lay-value="2" class="">女</dd></dl></div>
                 </div>
@@ -206,15 +206,12 @@
                         submit.trigger('click');
                     }
                 });
-
                 //同步更新缓存对应的值
-                /*                obj.update({
-                                    username: '123'
-                                    ,title: 'xxx'
-                                });*/
+                /* obj.update({
+                     username: '123'
+                     ,title: 'xxx'
+                   });*/
             }
-
-
         });
 
         table.on('toolbar(list)', function (obj) {
@@ -244,7 +241,6 @@
                                     return false;
                                 }
                             });
-
                         });
                         submit.trigger('click');
                     }
