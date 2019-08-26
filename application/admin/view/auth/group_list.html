@@ -48,8 +48,43 @@
             var tr = obj.tr; //获得当前行 tr 的DOM对象
 
             if(layEvent === 'rules'){
-
-                //do something
+                layer.open({
+                    type: 2,
+                    title: '编辑权限',
+                    content: '{:url("auth/groupRules")}'+'?group_id='+data.group_id,
+                    area: ['600px', '500px'],
+                    maxmin:true,
+                    btn: ['确定', '取消'],
+                    success: function(layero, index){
+                        var div = layero.find('iframe').contents().find('#rules_form');
+                        //helper.setForm(div, data);  //表单赋值
+                    },
+                    yes : function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submit = layero.find('iframe').contents().find('#rules_submit');
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(rules_submit)', function(){
+                            loading = layer.load(1, {shade: [0.1,'#fff']});
+                            var treeObj = iframeWindow.getZTreeObjChild();
+                            var nodes = treeObj.getCheckedNodes(true),
+                                v = "";
+                            for(var i=0;i<nodes.length;i++){
+                                v+=nodes[i].id + ",";
+                            }
+                            $.post("{:url('groupSaveRules')}", {'rules':v,'group_id':data.group_id}, function (res) {
+                                layer.close(loading);
+                                if (res.code > 0) {
+                                    layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                                        layer.close(index);
+                                    });
+                                } else {
+                                    layer.msg(res.msg, {time: 1800, icon: 2});
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
             } else if(layEvent === 'del'){ //删除
                 layer.confirm('真的删除行么', function(index){
                     obj.del(); //删除对应行（tr）的DOM结构，并更新缓存

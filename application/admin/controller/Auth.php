@@ -16,6 +16,7 @@ namespace app\admin\controller;
 
 use app\admin\model\AdminUser;
 use app\admin\model\AuthGroup;
+use app\admin\model\AuthRule;
 use app\common\base\AdminBase;
 
 class Auth extends AdminBase
@@ -203,6 +204,46 @@ class Auth extends AdminBase
         return $this->fetch('group_op');
     }
 
+
+    public function groupRules(){
+        $group_id = input('get.group_id/d');
+        $rules = AuthRule::field('id,pid,title')->order('sort', 'desc')->select()->toArray();
+        $group_rules = AuthGroup::where('group_id', $group_id)->value('rules');
+        $ztree = $this->buildZtree($rules, $pid=0, $group_rules);
+
+        $this->assign('ztree', json_encode($ztree,true));
+        return $this->fetch();
+    }
+
+    public function buildZtree($rules, $pid=0, $group_rules){
+        $ztree=[];
+        $rulesArray = explode(',', $group_rules);
+        foreach ($rules as $v){
+            if($v['pid']==$pid){
+                if(in_array($v['id'], $rulesArray)){
+                    $v['checked'] = true;
+                }
+                $v['open'] = true;
+                $ztree[] = $v;
+                $ztree = array_merge($ztree,$this->buildZtree($rules, $v['id'],$group_rules));
+            }
+        }
+        return $ztree;
+    }
+
+    public function groupSaveRules(){
+        if($this->request->isPost()) {
+            $data = input('post.');
+            if (empty($data['rules'])) {
+                return $this->apiError('请选择权限！');
+            }
+            if (AuthGroup::update($data)) {
+                return $this->apiSuccess('权限更新成功！');
+            } else {
+                return $this->apiError('权限更新失败！');
+            }
+        }
+    }
 
 
 }

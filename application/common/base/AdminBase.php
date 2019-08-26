@@ -26,11 +26,11 @@ class AdminBase extends Controller
 {
     public function initialize()
     {
-        $this->getAuths(1);
+        $group_id = Session::get('admin.group_id');
+        $this->getAuths($group_id);
         if(config('app.view_type') == 'template') {
             //Hook::add('check_login', 'app\\admin\\behavior\\CheckLogin');
             //Hook::listen('check_login');
-
             // TODO : disabled redirect in behavior
 
             if(in_array($this->request->action(), ['login'])){
@@ -54,9 +54,10 @@ class AdminBase extends Controller
 
     public function getAuths($group_id){
         $auths = AuthGroup::get($group_id);
-        $auth_array = explode(',', $auths['auths']);
+        $auth_array = explode(',', $auths['rules']);
         $menu_list = AuthRule::where(['status' => 1, 'id' => $auth_array])
                      ->where('type', '>', 0)
+                     ->where('is_menu', '=', 1)
                      ->column('id, title, pid, url');  //column output array
         $nav = AuthRule::where(['status' => 1, 'pid' => 0, 'type' => 0 ])->order('sort', 'ASC' )->select()->toArray();
         foreach ($nav as $key => $val){
@@ -126,8 +127,8 @@ class AdminBase extends Controller
         $sys_info['domain'] 		= $_SERVER['HTTP_HOST'];
         $sys_info['memory_limit']   = ini_get('memory_limit');
         $sys_info['version']   	    = config('system.version');
-        $mysqlinfo = Db::query("SELECT VERSION() as version");
-        $sys_info['mysql_version']  = $mysqlinfo[0]['version'];
+        $mysql_info = Db::query("SELECT VERSION() as version");
+        $sys_info['mysql_version']  = $mysql_info[0]['version'];
         if(function_exists("gd_info")){
             $gd = gd_info();
             $sys_info['gdinfo'] 	= $gd['GD Version'];

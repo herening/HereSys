@@ -1,0 +1,47 @@
+{include file="common/header" /}
+<link rel="stylesheet" href="__STATIC__/ztree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<link rel="stylesheet" href="__STATIC__/ztree/css/ztree.css" type="text/css">
+
+<div class="layui-form" lay-filter="rules_form" id="rules_form" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">权限</label>
+        <div class="layui-input-inline">
+            <ul id="treeShow" class="ztree"></ul>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit="" lay-filter="rules_submit" id="rules_submit" value="确认">
+    </div>
+</div>
+{include file="common/footer" /}
+<script src="__STATIC__/ztree/js/jquery-1.4.4.min.js?v={$Think.config.system.version}"></script>
+<script src="__STATIC__/ztree/js/jquery.ztree.core.min.js?v={$Think.config.system.version}"></script>
+<script src="__STATIC__/ztree/js/jquery.ztree.excheck.min.js?v={$Think.config.system.version}"></script>
+<!--<script src="__STATIC__/ztree/js/jquery.ztree.exedit.min.js?v={$Think.config.system.version}"></script>-->
+<script type="text/javascript">
+    var setting = {
+        check:{ enable: true,
+                chkStyle: "checkbox",
+                chkboxType: { "Y": "ps", "N": "ps" }
+        },
+        view: {showLine: false, showIcon: false, dblClickExpand: false},
+        data: {
+            simpleData: {enable: true, pIdKey:'pid', idKey:'id'},
+            key:{name:'title'}
+        }
+    };
+    var zJson ={$ztree|raw};
+    $.fn.zTree.init($("#treeShow"), setting, zJson);
+
+    function getZTreeObjChild(){
+        var treeObj = $.fn.zTree.getZTreeObj("treeShow");
+        return treeObj;
+    }
+
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form ,$ = layui.jquery, layer = layui.layer;
+    });
+</script>
+</body>
+</html>
