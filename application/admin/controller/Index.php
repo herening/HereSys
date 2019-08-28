@@ -48,7 +48,7 @@ class Index extends AdminBase
             if($validate !== true){
                 return $this->apiError($validate);
             }
-            if($data['captcha']){
+            if(isset($data['captcha']) && $data['captcha']){
                 // TODO: validate captcha
                 if(!$this->verify($data['captcha'])){
                     return $this->apiError('验证码错误');
@@ -83,7 +83,7 @@ class Index extends AdminBase
 
     public function logout(){
         Session::delete('admin');
-        return $this->apiSuccess('登出成功！',"index/login");
+        return $this->apiSuccess('登出成功！',"admin/index/login");
     }
 
 

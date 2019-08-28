@@ -1,0 +1,74 @@
+{include file="common/header" /}
+
+<div class="layui-form" lay-filter="rule_form" id="rule_form" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+        <label class="layui-form-label">权限名称</label>
+        <div class="layui-input-inline">
+            <input type="text" name="title" lay-verify="required" placeholder="请输入权限名称" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">父级</label>
+        <div class="layui-input-inline">
+            <input type="text" name="group_name" lay-verify="required" placeholder="请输入权限组名" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">规则</label>
+        <div class="layui-input-inline">
+            <input type="text" name="url" lay-verify="required" placeholder="请输入规则" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">图标</label>
+        <div class="layui-input-inline">
+            <input type="text" name="icon" lay-verify="required" placeholder="请选择图标" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否菜单</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="is_menu" lay-skin="switch" lay-text="是|否" checked>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">是否鉴权</label>
+        <div class="layui-input-inline">
+            <input type="checkbox" name="is_auth" lay-skin="switch" lay-text="是|否" >
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">排序</label>
+        <div class="layui-input-inline">
+            <input type="text" name="sort" lay-verify="required" placeholder="请输入排序号" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit="" lay-filter="rule_submit" id="rule_submit" value="确认">
+    </div>
+</div>
+
+
+{include file="common/footer" /}
+<script>
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form,layer = layui.layer,$ = layui.jquery;
+        form.on('submit(auth)', function (data) {
+            // 提交到方法 默认为本身
+            $.post("{:url('ruleEdit')}",data.field,function(res){
+                if(res.code > 0){
+                    layer.msg(res.msg,{time:1800,icon:1},function(){
+                        location.href = res.url;
+                    });
+                }else{
+                    layer.msg(res.msg,{time:1800,icon:2});
+                }
+            });
+        })
+    })
+</script>
+</body>
+</html>

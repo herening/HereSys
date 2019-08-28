@@ -1,0 +1,213 @@
+{include file="common/header" /}
+
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <blockquote class="layui-elem-quote">
+        <button class="layui-btn layui-btn-warm" onclick="reload()">reload</button>
+        <button class="layui-btn layui-btn-warm" onclick="add(null);">新增一行</button>
+        <button class="layui-btn layui-btn-warm" onclick="openAll();" >展开或折叠全部</button>
+    </blockquote>
+    <table class="layui-table" id="treeTable" lay-filter="treeTable"></table>
+</div>
+
+{include file="common/footer" /}
+<!--<script src="__STATIC__/admin/js/admin.js?v={$Think.config.system.version}"></script>-->
+
+<script type="text/html" id="is_auth">
+    <input type="checkbox" name="is_auth" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="is_auth" {{ d.is_auth == 1 ? 'checked' : '' }}>
+</script>
+
+<script type="text/html" id="switch">
+    <input type="checkbox" name="is_menu" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="is_menu" {{ d.is_menu == 1 ? 'checked' : '' }}>
+</script>
+
+<script type="text/html" id="operate">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+<script>
+    var editObj=null,ptable=null,treeGrid=null,tableId='treeTable',layer=null;
+    layui.config({
+        base: '/static/extend/treegrid/'
+    }).extend({
+        treeGrid:'treeGrid'
+    }).use(['jquery','treeGrid','layer', 'form' ], function(){     //,'helper'
+        var $=layui.jquery,
+            treeGrid = layui.treeGrid,//很重要
+            layer=layui.layer,
+            //helper = layui.helper,
+            form = layui.form;
+
+        ptable = treeGrid.render({
+            id:tableId
+            ,elem: '#'+tableId
+            ,url:'{:url("ruleList")}'
+            ,cellMinWidth: 100
+            ,idField:'id'//必須字段
+            ,treeId:'id'//树形id字段名称
+            ,treeUpId:'pid'//树形父id字段名称
+            ,treeShowName:'title'//以树形式显示的字段
+            //,heightRemove:[".dHead",10]//不计算的高度,表格设定的是固定高度，此项不生效
+            ,height:'580'
+            ,isFilter:false
+            ,iconOpen:true//是否显示图标【默认显示】
+            ,isOpenDefault:true//节点默认是展开还是折叠【默认展开】
+            ,loading:true
+            ,method:'post'
+            ,isPage:false
+            ,cols: [[
+                {field:'id',width:100, title: 'id',sort:true},
+                {field:'title', width:300, title: '名称',edit:'text',sort:true},
+                {field:'url', width:300, title: 'url',sort:true},
+                {field: 'is_auth',align: 'center', title: '是否验证权限', width: 150,toolbar: '#is_auth'},
+                {field: 'is_menu',align: 'center', title: '是否菜单', width: 150,toolbar: '#switch'},
+                {width:150,title: '操作', align:'center', toolbar: '#operate'}
+            ]]
+        });
+
+        treeGrid.on('tool('+tableId+')',function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+            var tr = obj.tr;
+            console.log(data);
+
+            if(layEvent === 'del') {
+                del(obj);
+            }
+            if(layEvent === "add") {
+                add(obj);
+            }
+            if(layEvent === "edit"){
+                layer.open({
+                    type: 2,
+                    title: '编辑权限规则',
+                    content: '{:url("ruleEdit")}', //?id='+ data.id +'
+                    area: ['420px', '550px'],
+                    maxmin:true,
+                    btn: ['确定', '取消'],
+                    success: function(layero, index){
+                        var div = layero.find('iframe').contents().find('#rule_form');   // div.html() div里面的内容,不包含当前这个div
+                        //helper.setForm(div, data);
+                    },
+                    yes : function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe'+ index]
+                            ,submit = layero.find('iframe').contents().find('#LAY-user-back-submit');
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(LAY-user-front-submit)', function(form_data){
+                            var field = form_data.field; //获取提交的字段
+                            field.status  = field.status==='on'?1:0;
+                            field.id = data.id;
+                            //提交 Ajax 成功后，静态更新表格中的数据
+                            $.post('{:url("adminEdit")}', field, function (res) {
+                                if (res.code === 200) {
+                                    table.reload('user-list');//table.reload('list'); //数据刷新
+                                    layer.close(index);//关闭弹层
+                                }else{
+                                    return false;
+                                }
+                            });
+                        });
+                        submit.trigger('click');
+                    }
+                });
+            }
+        });
+
+        form.on('switch(is_menu)', function(obj){
+            loading =layer.load(1, {shade: [0.1,'#fff']});
+            var id = this.value;
+            var is_menu = obj.elem.checked===true?1:0;
+            $.post('{:url("ruleIsMenu")}',{'id':id,'is_menu':is_menu},function (res) {
+                layer.close(loading);
+                if (res.code === 200) {
+                    treeGrid.render;
+                }else{
+                    layer.msg(res.msg,{time:1000,icon:2});
+                    treeGrid.render;
+                    return false;
+                }
+            })
+        });
+
+        form.on('switch(is_auth)', function(obj){
+            loading =layer.load(1, {shade: [0.1,'#fff']});
+            var id = this.value;
+            var is_auth = obj.elem.checked===true?1:0;
+            $.post('{:url("ruleIsAuth")}',{'id':id,'is_auth':is_auth},function (res) {
+                layer.close(loading);
+                if (res.code === 200) {
+                    treeGrid.render;
+                }else{
+                    layer.msg(res.msg,{time:1000,icon:2});
+                    treeGrid.render;
+                    return false;
+                }
+            })
+        });
+
+    });
+
+    function del(obj) {
+        layer.confirm("你确定删除数据吗？如果存在下级节点则一并删除，此操作不能撤销！", {icon: 3, title:'提示'},
+            function(index){
+                obj.del();
+                layer.close(index);
+            },function (index) {
+                layer.close(index);
+            }
+        );
+    }
+
+    //添加
+    function add(pObj) {
+        var pdata=pObj?pObj.data:null;
+        var param={};
+        param.name='水果'+Math.random();
+        param.id=++i;
+        param.pId=pdata?pdata.id:null;
+        treeGrid.addRow(tableId,pdata?pdata[treeGrid.config.indexName]+1:0,param);
+    }
+
+    function openorclose() {
+        var map=treeGrid.getDataMap(tableId);
+        var o= map['102'];
+        treeGrid.treeNodeOpen(tableId,o,!o[treeGrid.config.cols.isOpen]);
+    }
+
+
+    function openAll() {
+        var treedata=treeGrid.getDataTreeList(tableId);
+        treeGrid.treeOpenAll(tableId,!treedata[0][treeGrid.config.cols.isOpen]);
+    }
+
+    function getCheckData() {
+        var checkStatus = treeGrid.checkStatus(tableId)
+            ,data = checkStatus.data;
+        layer.alert(JSON.stringify(data));
+    }
+    function radioStatus() {
+        var data = treeGrid.radioStatus(tableId)
+        layer.alert(JSON.stringify(data));
+    }
+    function getCheckLength() {
+        var checkStatus = treeGrid.checkStatus(tableId)
+            ,data = checkStatus.data;
+        layer.msg('选中了：'+ data.length + ' 个');
+    }
+
+    function reload() {
+        treeGrid.reload(tableId,{
+            page:{
+                curr:1
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>

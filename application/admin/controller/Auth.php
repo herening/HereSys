@@ -62,12 +62,12 @@ class Auth extends AdminBase
     public function adminStatusSwitch(){
         if($this->request->isPost()){
             $id = input('post.id');
-            $is_open = input('post.is_open');
+            $is_auth= input('post.is_auth');
 
             if(!$id){
                 $this->apiError('用户不存在');
             }
-            AdminUser::where('id', $id)->update(['status' => $is_open]);
+            AdminUser::where('id', $id)->update(['status' => $is_auth]);
             return $this->apiSuccess();
         }
     }
@@ -244,6 +244,49 @@ class Auth extends AdminBase
             }
         }
     }
+
+    public function ruleList(){
+        if($this->request->isPost()) {
+            $rules = AuthRule::order('sort asc')->select()->toArray();
+            return $this->apiTable($rules);
+        }
+        $this->assign('title', '菜单管理');
+        return $this->fetch();
+    }
+
+    public function ruleIsAuth(){
+        if($this->request->isPost()){
+            $id = input('post.id');
+            $is_auth= input('post.is_auth');
+            AuthRule::where('id', $id)->update(['is_auth' => $is_auth]);
+            return $this->apiSuccess();
+        }
+    }
+
+    public function ruleIsMenu(){
+        if($this->request->isPost()){
+            $id = input('post.id');
+            $is_menu = input('post.is_menu');
+            AuthRule::where('id', $id)->update(['is_menu' => $is_menu]);
+            return $this->apiSuccess();
+        }
+    }
+
+
+    public function ruleEdit(){
+        if($this->request->isPost()){
+            $data = input('post.');
+            if($data['group_id'] && $data['group_name']){
+                AuthGroup::update($data);
+                return $this->apiSuccess();
+            }else{
+                return $this->apiError();
+            }
+
+        }
+        return $this->fetch('rule_op');
+    }
+
 
 
 }

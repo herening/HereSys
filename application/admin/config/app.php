@@ -17,8 +17,11 @@ use think\facade\Env;
 return[
     // view type of back  template mvc | api mvvm
     'view_type' => 'template',
-    'captcha' => 1,
+    'captcha' => 0,
     'upload_path' => Env::get('root_path').'public/uploads/admin',
     'img_ext' => 'jpg,png,gif,jpeg',
     'extra_path' => 'uploads/admin/',
+    //'exception_tmpl'         => Env::get('app_path') . 'common/tpl/think_exception.tpl',
+    'dispatch_success_tmpl'  => Env::get('app_path') . 'common/tpl/dispatch_jump.tpl',
+    'dispatch_error_tmpl'    => Env::get('app_path') . 'common/tpl/dispatch_jump.tpl',
 ];

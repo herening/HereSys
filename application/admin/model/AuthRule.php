@@ -19,4 +19,8 @@ use think\Model;
 class AuthRule extends Model
 {
     protected $autoWriteTimestamp = true;
+
+    public function getUrlAttr($value){
+        return strtolower($value);
+    }
 }

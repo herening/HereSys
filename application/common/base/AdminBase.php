@@ -20,20 +20,35 @@ use here\Tree;
 use think\Controller;
 //use think\facade\Hook;
 use think\Db;
+use think\facade\Request;
 use think\facade\Session;
 
 class AdminBase extends Controller
 {
+
+    protected $path;
+    protected $rules_array;
+    protected $group_id;
+
+
     public function initialize()
     {
-        $group_id = Session::get('admin.group_id');
-        $this->getAuths($group_id);
+        $this->path = Request::path();
+        $this->group_id = Session::get('admin.group_id');
+        $this->rules_array = $this->getRulesArray();
+
+        $this->getMenus($this->group_id);
+        if(Session::get('admin.id') > 1){
+            $this->checkAuth();
+        }
+
+
         if(config('app.view_type') == 'template') {
             //Hook::add('check_login', 'app\\admin\\behavior\\CheckLogin');
             //Hook::listen('check_login');
             // TODO : disabled redirect in behavior
 
-            if(in_array($this->request->action(), ['login'])){
+            if(in_array(Request::action(), ['login'])){
                 return true;
             }else{
                 if(Session::get('admin')){
@@ -47,21 +62,30 @@ class AdminBase extends Controller
         }
     }
 
-    public function checkAuth($uid){
+    public function checkAuth(){
+        $all_need_list = AuthRule::where('status',1)
+            ->where('is_auth', 1)
+            ->column('url');
 
-
+        if(in_array($this->path, $all_need_list)){
+            $url_list = AuthRule::where(['status' => 1, 'id' => $this->rules_array])
+                ->where('is_auth', 1)
+                ->column('url');
+            if(!in_array($this->path, $url_list) ){
+                $this->error('您没有该权限！');
+            }
+        }
     }
 
-    public function getAuths($group_id){
-        $auths = AuthGroup::get($group_id);
-        $auth_array = explode(',', $auths['rules']);
-        $menu_list = AuthRule::where(['status' => 1, 'id' => $auth_array])
+    public function getMenus($group_id){
+        $rules_array = $this->getRulesArray($group_id);
+        $menu_list = AuthRule::where(['status' => 1, 'id' => $rules_array])
                      ->where('type', '>', 0)
                      ->where('is_menu', '=', 1)
-                     ->column('id, title, pid, url');  //column output array
+                     ->column('id, title, pid, url, icon');  //column output array
         $nav = AuthRule::where(['status' => 1, 'pid' => 0, 'type' => 0 ])->order('sort', 'ASC' )->select()->toArray();
         foreach ($nav as $key => $val){
-            if(!in_array($val['id'], $auth_array)){
+            if(!in_array($val['id'], $rules_array)){
                 unset($nav[$key]);
             }
         }
@@ -70,6 +94,12 @@ class AdminBase extends Controller
         $menus = $tree->getTreeArray(1);  //$tree->getTreeList($tree->getTreeArray(1))
         $this->assign('nav', $nav);
         $this->assign('menus', $menus);
+    }
+
+    public function getRulesArray(){
+        $rules = AuthGroup::get($this->group_id);
+        $rules_array = explode(',', $rules['rules']);
+        return $rules_array;
     }
 
     public function apiSuccess($msg = '', $data = [], $code = 200){
@@ -89,6 +119,12 @@ class AdminBase extends Controller
         ];
         return json($result);
     }
+
+    /*
+     * Table
+     * demo: "code":0,"msg":"","count":1000,"data":
+     * success: is 0
+     */
 
     public function apiTable( $data = [], $code = 0, $msg= '', $count = '' ){
         $result = [
