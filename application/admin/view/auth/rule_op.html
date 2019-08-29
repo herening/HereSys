@@ -11,7 +11,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">图标</label>
         <div class="layui-input-inline">
-            <input type="text" name="icon" id="iconPicker" lay-filter="iconPicker"  lay-verify="required" placeholder="请选择图标" autocomplete="off" class="layui-input">
+            <input type="text" name="icon" id="iconPicker" lay-filter="iconPicker"  placeholder="请选择图标" autocomplete="off" class="layui-input">
         </div>
     </div>
 
@@ -36,7 +36,7 @@
     <div class="layui-form-item">
         <label class="layui-form-label">是否鉴权</label>
         <div class="layui-input-inline">
-            <input type="checkbox" name="is_auth" lay-skin="switch" lay-text="是|否" >
+            <input type="checkbox" name="is_auth" lay-skin="switch" lay-text="是|否" checked>
         </div>
     </div>
 
@@ -64,7 +64,7 @@
 <script src="__STATIC__/admin/js/admin.js?v={$Think.config.system.version}"></script>
 <script>
     layui.use(['iconPicker', 'form', 'layer'], function () {
-        var $ = layui.jquery, iconPicker = layui.iconPicker, layer = layui.layer,form = layui.form;
+        var  iconPicker = layui.iconPicker, layer = layui.layer,form = layui.form;
 
         iconPicker.render({
             // 选择器，推荐使用input
@@ -81,11 +81,11 @@
             cellWidth: '43px',
             // 点击回调
             click: function (data) {
-                console.log(data);
+                //console.log(data);
             },
             // 渲染成功后的回调
             success: function(d) {
-                console.log(d);
+                //console.log(d);
             }
         });
 

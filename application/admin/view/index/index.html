@@ -35,7 +35,7 @@
             <ul class="layui-nav layui-nav-tree"  lay-filter="here-nav">  <!--lay-shrink="all"   展开子菜单时，是否收缩兄弟节点已展开的子菜单-->
                 {volist name="menus" id="vo"}
                 <li class="layui-nav-item">
-                    <a class="" href="javascript:;">{$vo.title}</a>
+                    <a class="" href="javascript:;"> <i class="layui-icon {$vo.icon}"></i>{$vo.title}</a>
                     {if $vo.childlist != null}
                     <dl class="layui-nav-child">
                         {volist name="$vo['childlist']" id="child"}

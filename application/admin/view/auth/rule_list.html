@@ -11,12 +11,12 @@
     <input type="checkbox" name="is_auth" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="is_auth" {{ d.is_auth == 1 ? 'checked' : '' }}>
 </script>
 
-<script type="text/html" id="switch">
+<script type="text/html" id="is_menu">
     <input type="checkbox" name="is_menu" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="is_menu" {{ d.is_menu == 1 ? 'checked' : '' }}>
 </script>
 
 <script type="text/html" id="topBtn">
-    <button class="layui-btn layui-btn-warm" lay-event="add" >添加</button>
+    <button class="layui-btn layui-btn-warm" onclick="add()" >添加</button>
     <button class="layui-btn layui-btn-warm" onclick="reload()">reload</button>
     <button class="layui-btn layui-btn-warm" onclick="openAll();" >展开或折叠全部</button>
 </script>
@@ -28,12 +28,13 @@
 
 {include file="common/footer" /}
 <script src="__STATIC__/admin/js/admin.js?v={$Think.config.system.version}"></script>
+<script src="__STATIC__/extend/ztree/js/jquery-1.4.4.min.js?v={$Think.config.system.version}"></script>
 <script>
     var editObj=null,ptable=null,treeGrid=null,tableId='treeTable',layer=null;
 
     layui.use(['jquery','treeGrid','layer', 'form', 'helper'], function(){
-        var $=layui.jquery;
-            layer=layui.layer;
+        var $ = layui.jquery;
+            layer = layui.layer;
             form = layui.form;
             helper = layui.helper;
             treeGrid = layui.treeGrid;   // notice:  use ';'  variable global
@@ -61,7 +62,7 @@
                 {field:'title', width:300, title: '名称',edit:'text',sort:true},
                 {field:'url', width:300, title: 'url',sort:true},
                 {field: 'is_auth',align: 'center', title: '是否验证权限', width: 150,toolbar: '#is_auth'},
-                {field: 'is_menu',align: 'center', title: '是否菜单', width: 150,toolbar: '#switch'},
+                {field: 'is_menu',align: 'center', title: '是否菜单', width: 150,toolbar: '#is_menu'},
                 {width:150,title: '操作', align:'center', toolbar: '#operate'}
             ]]
         });
@@ -73,9 +74,6 @@
 
             if(layEvent === 'del') {
                 del(obj);
-            }
-            if(layEvent === "add") {
-
             }
             if(layEvent === "edit"){
                 layer.open({
@@ -91,16 +89,17 @@
                     },
                     yes : function (index, layero) {
                         var iframeWindow = window['layui-layer-iframe'+ index]
-                            ,submit = layero.find('iframe').contents().find('#LAY-user-back-submit');
+                            ,submit = layero.find('iframe').contents().find('#rule_submit');
                         //监听提交
-                        iframeWindow.layui.form.on('submit(LAY-user-front-submit)', function(form_data){
+                        iframeWindow.layui.form.on('submit(rule_submit)', function(form_data){
                             var field = form_data.field; //获取提交的字段
-                            field.status  = field.status==='on'?1:0;
+                            field.is_auth  = field.is_auth==='on'?1:0;
+                            field.is_menu  = field.is_menu==='on'?1:0;
                             field.id = data.id;
                             //提交 Ajax 成功后，静态更新表格中的数据
-                            $.post('{:url("adminEdit")}', field, function (res) {
+                            $.post('{:url("ruleEdit")}', field, function (res) {
                                 if (res.code === 200) {
-                                    table.reload('user-list');//table.reload('list'); //数据刷新
+                                    reload();
                                     layer.close(index);//关闭弹层
                                 }else{
                                     return false;
@@ -123,7 +122,7 @@
                     reload();
                 }else{
                     layer.msg(res.msg,{time:1000,icon:2});
-                    treeGrid.render;
+                    reload();
                     return false;
                 }
             })
@@ -136,10 +135,10 @@
             $.post('{:url("ruleIsAuth")}',{'id':id,'is_auth':is_auth},function (res) {
                 layer.close(loading);
                 if (res.code === 200) {
-                    treeGrid.render;
+                    reload();
                 }else{
                     layer.msg(res.msg,{time:1000,icon:2});
-                    treeGrid.render;
+                    reload();
                     return false;
                 }
             })
@@ -170,6 +169,38 @@
             }
         });
     }
+
+    function add(){
+        layer.open({
+            type: 2,
+            title: '添加权限规则',
+            content: '{:url("ruleAdd")}', //?id='+ data.id +'
+            area: ['420px', '600px'],
+            maxmin:true,
+            btn: ['确定', '取消'],
+            yes : function (index, layero) {
+                var iframeWindow = window['layui-layer-iframe'+ index]
+                    ,submit = layero.find('iframe').contents().find('#rule_submit');
+                //监听提交
+                iframeWindow.layui.form.on('submit(rule_submit)', function(form_data){
+                    var field = form_data.field; //获取提交的字段
+                    field.is_auth  = field.is_auth==='on'?1:0;
+                    field.is_menu  = field.is_menu==='on'?1:0;
+                    console.log(field);
+                    $.post('{:url("ruleAdd")}', field, function (res) {
+                        if (res.code === 200) {
+                            reload();
+                            layer.close(index);//关闭弹层
+                        }else{
+                            return false;
+                        }
+                    });
+                });
+                submit.trigger('click');
+            }
+        });
+    }
+
 </script>
 
 </body>

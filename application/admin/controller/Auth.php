@@ -277,16 +277,34 @@ class Auth extends AdminBase
     public function ruleEdit(){
         if($this->request->isPost()){
             $data = input('post.');
-            if($data['group_id'] && $data['group_name']){
-                AuthGroup::update($data);
-                return $this->apiSuccess();
+            if(!empty($data)){
+                AuthRule::update($data);
+                return $this->apiSuccess('编辑权限成功！');
             }else{
                 return $this->apiError();
             }
-
+        }else{
+            $this->assign('tree_list',$this->getRuleTree());
+            return $this->fetch('rule_op');
         }
+    }
+
+    public function ruleAdd(){
+        if($this->request->isPost()) {
+            $data = input('post.');
+            $rule = AuthRule::create($data);
+            if($rule->id){
+                return $this->apiSuccess('添加成功！');
+            }else{
+                return $this->apiError('添加失败！');
+            }
+        }
+        $this->assign('tree_list',$this->getRuleTree());
+        return $this->fetch('rule_op');
+    }
+
+    public function getRuleTree(){
         $all_list = AuthRule::where('status',1)
-            ->where('is_auth', 1)
             ->order('sort asc')
             ->column('id,title,pid');
         $tree = Tree::getInstance()->init($all_list);
@@ -294,10 +312,8 @@ class Auth extends AdminBase
         $tree_list = $tree->getTreeList($tree_array);
         $top = [ 'id' => 0, 'title' => ' 顶级'];
         array_unshift($tree_list,$top);
-        $this->assign('tree_list',$tree_list);
-        return $this->fetch('rule_op');
+        return $tree_list;
     }
-
 
 
 }
