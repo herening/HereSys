@@ -18,6 +18,7 @@ use app\admin\model\AdminUser;
 use app\admin\model\AuthGroup;
 use app\admin\model\AuthRule;
 use app\common\base\AdminBase;
+use here\Tree;
 
 class Auth extends AdminBase
 {
@@ -284,6 +285,16 @@ class Auth extends AdminBase
             }
 
         }
+        $all_list = AuthRule::where('status',1)
+            ->where('is_auth', 1)
+            ->order('sort asc')
+            ->column('id,title,pid');
+        $tree = Tree::getInstance()->init($all_list);
+        $tree_array = $tree->getTreeArray(0);
+        $tree_list = $tree->getTreeList($tree_array);
+        $top = [ 'id' => 0, 'title' => ' 顶级'];
+        array_unshift($tree_list,$top);
+        $this->assign('tree_list',$tree_list);
         return $this->fetch('rule_op');
     }
 

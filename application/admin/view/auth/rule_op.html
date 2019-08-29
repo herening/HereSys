@@ -7,10 +7,23 @@
             <input type="text" name="title" lay-verify="required" placeholder="请输入权限名称" autocomplete="off" class="layui-input">
         </div>
     </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">图标</label>
+        <div class="layui-input-inline">
+            <input type="text" name="icon" id="iconPicker" lay-filter="iconPicker"  lay-verify="required" placeholder="请选择图标" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+
     <div class="layui-form-item">
         <label class="layui-form-label">父级</label>
         <div class="layui-input-inline">
-            <input type="text" name="group_name" lay-verify="required" placeholder="请输入权限组名" autocomplete="off" class="layui-input">
+            <select name="pid" lay-verify="required">
+                <option value="">请选择父级</option>
+                {volist name="tree_list" id="vo"}
+                    <option value="{$vo.id}">{$vo.title|raw}</option>
+                {/volist}
+            </select>
         </div>
     </div>
     <div class="layui-form-item">
@@ -21,9 +34,9 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">图标</label>
+        <label class="layui-form-label">是否鉴权</label>
         <div class="layui-input-inline">
-            <input type="text" name="icon" lay-verify="required" placeholder="请选择图标" autocomplete="off" class="layui-input">
+            <input type="checkbox" name="is_auth" lay-skin="switch" lay-text="是|否" >
         </div>
     </div>
 
@@ -33,12 +46,7 @@
             <input type="checkbox" name="is_menu" lay-skin="switch" lay-text="是|否" checked>
         </div>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">是否鉴权</label>
-        <div class="layui-input-inline">
-            <input type="checkbox" name="is_auth" lay-skin="switch" lay-text="是|否" >
-        </div>
-    </div>
+
     <div class="layui-form-item">
         <label class="layui-form-label">排序</label>
         <div class="layui-input-inline">
@@ -53,22 +61,44 @@
 
 
 {include file="common/footer" /}
+<script src="__STATIC__/admin/js/admin.js?v={$Think.config.system.version}"></script>
 <script>
-    layui.use(['form', 'layer'], function () {
-        var form = layui.form,layer = layui.layer,$ = layui.jquery;
-        form.on('submit(auth)', function (data) {
-            // 提交到方法 默认为本身
-            $.post("{:url('ruleEdit')}",data.field,function(res){
-                if(res.code > 0){
-                    layer.msg(res.msg,{time:1800,icon:1},function(){
-                        location.href = res.url;
-                    });
-                }else{
-                    layer.msg(res.msg,{time:1800,icon:2});
-                }
-            });
-        })
-    })
+    layui.use(['iconPicker', 'form', 'layer'], function () {
+        var $ = layui.jquery, iconPicker = layui.iconPicker, layer = layui.layer,form = layui.form;
+
+        iconPicker.render({
+            // 选择器，推荐使用input
+            elem: '#iconPicker',
+            // 数据类型：fontClass/unicode，推荐使用fontClass
+            type: 'fontClass',
+            // 是否开启搜索：true/false，默认true
+            search: true,
+            // 是否开启分页：true/false，默认true
+            page: false,
+            // 每页显示数量，默认12
+            limit: 12,
+            // 每个图标格子的宽度：'43px'或'20%'
+            cellWidth: '43px',
+            // 点击回调
+            click: function (data) {
+                console.log(data);
+            },
+            // 渲染成功后的回调
+            success: function(d) {
+                console.log(d);
+            }
+        });
+
+        /**
+         * 选中图标 （常用于更新时默认选中图标）
+         * @param filter lay-filter
+         * @param iconName 图标名称，自动识别fontClass/unicode
+         */
+
+
+        //iconPicker.checkIcon('iconPicker', 'layui-icon-star-fill');
+
+    });
 </script>
 </body>
 </html>

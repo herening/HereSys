@@ -92,6 +92,7 @@ class AdminBase extends Controller
 
         $tree = Tree::getInstance()->init($menu_list);
         $menus = $tree->getTreeArray(1);  //$tree->getTreeList($tree->getTreeArray(1))
+        mydebug($tree);
         $this->assign('nav', $nav);
         $this->assign('menus', $menus);
     }
