@@ -38,7 +38,6 @@
             form = layui.form;
             helper = layui.helper;
             treeGrid = layui.treeGrid;   // notice:  use ';'  variable global
-
         ptable = treeGrid.render({
             id:tableId
             ,elem: '#'+tableId
@@ -71,7 +70,6 @@
             var data = obj.data;
             var layEvent = obj.event;
             var tr = obj.tr;
-
             if(layEvent === 'del') {
                 del(obj);
             }
@@ -200,7 +198,6 @@
             }
         });
     }
-
 </script>
 
 </body>

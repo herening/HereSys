@@ -104,11 +104,11 @@ class Auth extends AdminBase
                     }
                 }
             }
-        }else{
-            $groups = $this->getGroups();
-            $this->assign('groups', $groups);
-            return $this->fetch('admin_op');
         }
+        $groups = $this->getGroups();
+        $this->assign('groups', $groups);
+        return $this->fetch('admin_op');
+
     }
 
     public function adminDel(){
@@ -151,11 +151,10 @@ class Auth extends AdminBase
                     }
                 }
             }
-        }else{
-            $groups = $this->getGroups();
-            $this->assign('groups',$groups);
-            return $this->fetch('admin_op');
         }
+        $groups = $this->getGroups();
+        $this->assign('groups',$groups);
+        return $this->fetch('admin_op');
     }
 
     public function getGroups(){
@@ -178,9 +177,9 @@ class Auth extends AdminBase
                 return $this->apiSuccess('添加成功');
             }
         }
-
         return $this->fetch('group_op');
     }
+
     public function groupDel(){
         if($this->request->isPost()){
             $group_id = input('post.group_id/d');
@@ -200,18 +199,15 @@ class Auth extends AdminBase
             }else{
                 return $this->apiError();
             }
-
         }
         return $this->fetch('group_op');
     }
-
 
     public function groupRules(){
         $group_id = input('get.group_id/d');
         $rules = AuthRule::field('id,pid,title')->order('sort', 'desc')->select()->toArray();
         $group_rules = AuthGroup::where('group_id', $group_id)->value('rules');
         $ztree = $this->buildZtree($rules, $pid=0, $group_rules);
-
         $this->assign('ztree', json_encode($ztree,true));
         return $this->fetch();
     }
@@ -273,7 +269,6 @@ class Auth extends AdminBase
         }
     }
 
-
     public function ruleEdit(){
         if($this->request->isPost()){
             $data = input('post.');
@@ -283,10 +278,9 @@ class Auth extends AdminBase
             }else{
                 return $this->apiError();
             }
-        }else{
-            $this->assign('tree_list',$this->getRuleTree());
-            return $this->fetch('rule_op');
         }
+        $this->assign('tree_list',$this->getRuleTree());
+        return $this->fetch('rule_op');
     }
 
     public function ruleAdd(){
@@ -314,6 +308,4 @@ class Auth extends AdminBase
         array_unshift($tree_list,$top);
         return $tree_list;
     }
-
-
 }

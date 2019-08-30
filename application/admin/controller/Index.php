@@ -23,7 +23,6 @@ class Index extends AdminBase
     public function index()
     {
         //echo config('app.view_type');
-
         $this->assign('title',config('app_name'));
         return $this->fetch();
     }
@@ -33,8 +32,6 @@ class Index extends AdminBase
         $this->assign('sys_info',$sys_info);
         return $this->fetch();
     }
-
-
 
     public function login()
     {
@@ -80,15 +77,9 @@ class Index extends AdminBase
         return $this->fetch();
     }
 
-
     public function logout(){
         Session::delete('admin');
         return $this->apiSuccess('登出成功！',"admin/index/login");
-    }
-
-
-    public function demo(){
-        return 22222;
     }
 
     public function clearCache(){

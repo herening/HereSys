@@ -1,5 +1,4 @@
 {include file="common/header" /}
-
 <div class="admin-main layui-anim layui-anim-upbit">
     <fieldset class="layui-elem-field layui-field-title">
         <legend>{$title}</legend>
@@ -46,7 +45,6 @@
     <!--search end-->
     <table class="layui-table" id="user-list" lay-filter="list"></table>
 </div>
-
 {include file="common/footer" /}
 
 <script type="text/html" id="switch">
@@ -69,7 +67,6 @@
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
     {{# } }}
 </script>
-
 
 <script>
     layui.use(['table', 'form', 'layer'], function () {
@@ -206,11 +203,6 @@
                         submit.trigger('click');
                     }
                 });
-                //同步更新缓存对应的值
-                /* obj.update({
-                     username: '123'
-                     ,title: 'xxx'
-                   });*/
             }
         });
 

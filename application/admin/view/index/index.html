@@ -2,7 +2,8 @@
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header">
         <div class="layui-logo">{$title|default='系统管理'}</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
+
+        <!--left start-->
         <ul class="layui-nav layui-layout-left">
             <li class="layui-nav-item layadmin-flexible" lay-unselect="">
                 <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
@@ -13,6 +14,8 @@
             <li class="layui-nav-item"><a href="{$vo.url}">{$vo.title}</a></li>
             {/volist}
         </ul>
+        <!--left end-->
+        <!--right start-->
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="javascript:;">
@@ -27,6 +30,7 @@
                 </dl>
             </li>
         </ul>
+        <!--right end-->
     </div>
 
     <div class="layui-side layui-bg-black">

@@ -20,6 +20,7 @@ use here\Tree;
 use think\Controller;
 //use think\facade\Hook;
 use think\Db;
+use think\facade\Cache;
 use think\facade\Request;
 use think\facade\Session;
 
@@ -30,19 +31,16 @@ class AdminBase extends Controller
     protected $rules_array;
     protected $group_id;
 
-
     public function initialize()
     {
         $this->path = Request::path();
         $this->group_id = Session::get('admin.group_id');
         $this->rules_array = $this->getRulesArray();
-
         $this->getMenus($this->group_id);
+
         if(Session::get('admin.id') > 1){
             $this->checkAuth();
         }
-
-
         if(config('app.view_type') == 'template') {
             //Hook::add('check_login', 'app\\admin\\behavior\\CheckLogin');
             //Hook::listen('check_login');
@@ -66,7 +64,6 @@ class AdminBase extends Controller
         $all_need_list = AuthRule::where('status',1)
             ->where('is_auth', 1)
             ->column('url');
-
         if(in_array($this->path, $all_need_list)){
             $url_list = AuthRule::where(['status' => 1, 'id' => $this->rules_array])
                 ->where('is_auth', 1)
@@ -89,10 +86,8 @@ class AdminBase extends Controller
                 unset($nav[$key]);
             }
         }
-
         $tree = Tree::getInstance()->init($menu_list);
         $menus = $tree->getTreeArray(1);  //$tree->getTreeList($tree->getTreeArray(1))
-        mydebug($tree);
         $this->assign('nav', $nav);
         $this->assign('menus', $menus);
     }
@@ -126,7 +121,6 @@ class AdminBase extends Controller
      * demo: "code":0,"msg":"","count":1000,"data":
      * success: is 0
      */
-
     public function apiTable( $data = [], $code = 0, $msg= '', $count = '' ){
         $result = [
             'code' => $code,
@@ -150,27 +144,31 @@ class AdminBase extends Controller
     }
 
     public function sysInfo(){
-        $sys_info['os']             = PHP_OS;
-        $sys_info['zlib']           = function_exists('gzclose') ? 'YES' : 'NO';//zlib
-        $sys_info['safe_mode']      = (boolean) ini_get('safe_mode') ? 'YES' : 'NO';//safe_mode = Off
-        $sys_info['timezone']       = function_exists("date_default_timezone_get") ? date_default_timezone_get() : "no_timezone";
-        $sys_info['curl']			= function_exists('curl_init') ? 'YES' : 'NO';
-        $sys_info['web_server']     = $_SERVER['SERVER_SOFTWARE'];
-        $sys_info['phpv']           = phpversion();
-        $sys_info['ip'] 			= GetHostByName($_SERVER['SERVER_NAME']);
-        $sys_info['fileupload']     = @ini_get('file_uploads') ? ini_get('upload_max_filesize') :'unknown';
-        $sys_info['max_ex_time'] 	= @ini_get("max_execution_time").'s'; //脚本最大执行时间
-        $sys_info['set_time_limit'] = function_exists("set_time_limit") ? true : false;
-        $sys_info['domain'] 		= $_SERVER['HTTP_HOST'];
-        $sys_info['memory_limit']   = ini_get('memory_limit');
-        $sys_info['version']   	    = config('system.version');
-        $mysql_info = Db::query("SELECT VERSION() as version");
-        $sys_info['mysql_version']  = $mysql_info[0]['version'];
-        if(function_exists("gd_info")){
-            $gd = gd_info();
-            $sys_info['gdinfo'] 	= $gd['GD Version'];
-        }else {
-            $sys_info['gdinfo'] 	= "未知";
+        $sys_info = Cache::get('sys_info');
+        if(!$sys_info){
+            $sys_info['os']             = PHP_OS;
+            $sys_info['zlib']           = function_exists('gzclose') ? 'YES' : 'NO';//zlib
+            $sys_info['safe_mode']      = (boolean) ini_get('safe_mode') ? 'YES' : 'NO';//safe_mode = Off
+            $sys_info['timezone']       = function_exists("date_default_timezone_get") ? date_default_timezone_get() : "no_timezone";
+            $sys_info['curl']			= function_exists('curl_init') ? 'YES' : 'NO';
+            $sys_info['web_server']     = $_SERVER['SERVER_SOFTWARE'];
+            $sys_info['phpv']           = phpversion();
+            $sys_info['ip'] 			= GetHostByName($_SERVER['SERVER_NAME']);
+            $sys_info['fileupload']     = @ini_get('file_uploads') ? ini_get('upload_max_filesize') :'unknown';
+            $sys_info['max_ex_time'] 	= @ini_get("max_execution_time").'s'; //脚本最大执行时间
+            $sys_info['set_time_limit'] = function_exists("set_time_limit") ? true : false;
+            $sys_info['domain'] 		= $_SERVER['HTTP_HOST'];
+            $sys_info['memory_limit']   = ini_get('memory_limit');
+            $sys_info['version']   	    = config('system.version');
+            $mysql_info = Db::query("SELECT VERSION() as version");
+            $sys_info['mysql_version']  = $mysql_info[0]['version'];
+            if(function_exists("gd_info")){
+                $gd = gd_info();
+                $sys_info['gdinfo'] 	= $gd['GD Version'];
+            }else {
+                $sys_info['gdinfo'] 	= "未知";
+            }
+            Cache::set('sys_info',$sys_info,3600);
         }
         return $sys_info;
     }
