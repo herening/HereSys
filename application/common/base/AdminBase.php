@@ -77,19 +77,15 @@ class AdminBase extends Controller
     public function getMenus($group_id){
         $rules_array = $this->getRulesArray($group_id);
         $menu_list = AuthRule::where(['status' => 1, 'id' => $rules_array])
-                     ->where('type', '>', 0)
+                     //->where('type', '>', 0)
                      ->where('is_menu', '=', 1)
                      ->column('id, title, pid, url, icon');  //column output array
-        $nav = AuthRule::where(['status' => 1, 'pid' => 0, 'type' => 0 ])->order('sort', 'ASC' )->select()->toArray();
-        foreach ($nav as $key => $val){
-            if(!in_array($val['id'], $rules_array)){
-                unset($nav[$key]);
-            }
-        }
         $tree = Tree::getInstance()->init($menu_list);
-        $menus = $tree->getTreeArray(1);  //$tree->getTreeList($tree->getTreeArray(1))
-        $this->assign('nav', $nav);
-        $this->assign('menus', $menus);
+        $menus = $tree->getTreeArray();
+        $href = (string)url('info');
+        $home = ["url"=>$href,"icon"=>"fa fa-home","title"=>"首页"];
+        $menu_out =['menus'=>$menus,'home'=>$home];
+        $this->assign('menus', json_encode($menu_out));
     }
 
     public function getRulesArray(){

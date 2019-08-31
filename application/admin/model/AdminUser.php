@@ -22,7 +22,7 @@ class AdminUser extends Model
     protected $table = 'here_admin';
 
     public function authGroup(){
-        return $this->belongsTo('AuthGroup', 'group_id');  //->bind(['group_name' => 'title']);
+        return $this->belongsTo('AuthGroup', 'group_id')->bind(['group_name' => 'group_name']);  //heretip: bind will join field else join array;
     }
     public function getLoginTimeAttr($value){
         return date(config('database.datetime_format'),$value);

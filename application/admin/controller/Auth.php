@@ -32,19 +32,21 @@ class Auth extends AdminBase
                 $id = ['id' => $id];
                 $where+=$id;
             }
-            if($username = input('post.username/s')){
-                $username = ['username' => $username];
+            if($username = input('post.username')){
+                $username = ['username','like','%'.$username.'%'];
                 $where+=$username;
             }
-            if($email = input('post.email/s', '', FILTER_VALIDATE_EMAIL)) {
-                $email = ['email' => $email];
+            if($email = input('post.email')) {
+                $email = ['email','like','%'.$email.'%'];
                 $where+=$email;
             }
             if($group_id = input('post.group_id/d')){
                 $group_id = ['group_id' => $group_id];
                 $where+=$group_id;
             }
-
+            if($where){
+                $where= [$where];  //heretip: [] necessary;
+            }
             $userList = AdminUser::with('authGroup')
                 ->where($where)
                 ->paginate($limit, false,['page'=>$page])
@@ -147,6 +149,10 @@ class Auth extends AdminBase
                     }
                     $user = AdminUser::update($data);
                     if($user->id){
+                        if(session('admin.id') == $user->id){
+                            session(null);
+                            return $this->apiSuccess('更新成功！','admin/index/login',201);
+                        }
                         return $this->apiSuccess('更新成功！');
                     }
                 }

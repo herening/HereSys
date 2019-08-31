@@ -195,6 +195,9 @@
                                 if (res.code === 200) {
                                     table.reload('user-list');//table.reload('list'); //数据刷新
                                     layer.close(index);//关闭弹层
+                                }else if(res.code === 201){
+                                    layer.close(index);//关闭弹层
+                                    top.location.href = res.data;
                                 }else{
                                     return false;
                                 }

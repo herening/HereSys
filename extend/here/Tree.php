@@ -410,11 +410,11 @@ class Tree
     /**
      *
      * 获取树状数组
-     * @param string $myid 要查询的ID
+     * @param int $myid 要查询的ID
      * @param string $itemprefix 前缀
      * @return array
      */
-    public function getTreeArray($myid, $itemprefix = '')
+    public function getTreeArray($myid = 0, $itemprefix = '')
     {
         $childs = $this->getChild($myid);
         $n = 0;
@@ -438,8 +438,12 @@ class Tree
                 }
                 $spacer = $itemprefix ? $itemprefix . $j : '';
                 $value['spacer'] = $spacer;
+                isset($value['url']) &&  $value['url'] = strtolower(url($value['url']));
                 $data[$n] = $value;
                 $data[$n]['childlist'] = $this->getTreeArray($id, $itemprefix . $k . $this->nbsp);
+                if(!$data[$n]['childlist']){
+                    unset($data[$n]['childlist']);
+                }
                 $n++;
                 $number++;
             }

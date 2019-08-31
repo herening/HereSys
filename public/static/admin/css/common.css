@@ -16,7 +16,6 @@
 
 .layui-body{
 	background-color: #F2F2F2;
-	padding: 10px;
 	bottom: 0;
 	border-left: solid 2px #1AA094;
 }
@@ -42,7 +41,7 @@
 
 .layui-tab-item.layui-show{
 	position: absolute;
-	top: 55px;
+	top: 2px;
 	bottom: 0;
 	left: 0;
 	right: 0;

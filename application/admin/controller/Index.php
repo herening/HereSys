@@ -84,12 +84,9 @@ class Index extends AdminBase
 
     public function clearCache(){
         if($this->request->isPost()){
-            $result = Cache::clear();
-            if($result){
-                return $this->apiSuccess('清除缓存成功');
-            }else{
-                return $this->apiError('未知错误！');
-            }
+            Cache::clear();
+            Session::clear();
+            return $this->apiSuccess('清除缓存成功');
         }
     }
 
