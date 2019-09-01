@@ -20,15 +20,15 @@
         <!--right start-->
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
+                <a href="javascript:;" title="清空缓存"  class=".cache-clear"><i class="fa fa-trash-o"></i></a>
+            </li>
+
+            <li class="layui-nav-item">
                 <a href="javascript:;">
                     <img src="{:session('admin.avatar')}" class="layui-nav-img">{:session('admin.username')}
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="">基本资料</a></dd>
-                    <dd><a href="">安全设置</a></dd>
                     <dd><a class="login-out here-pointer">退出</a></dd>
-                    <dd><a class="cache-clear here-pointer" >清空缓存</a></dd>
-
                 </dl>
             </li>
         </ul>
