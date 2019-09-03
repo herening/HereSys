@@ -28,7 +28,11 @@ class Index extends AdminBase
     }
 
     public function info(){
-        $sys_info = $this->sysInfo();
+        $sys_info = Cache::get('sys_info');
+        if(!$sys_info){
+            $sys_info = $this->sysInfo();
+            Cache::set('sys_info',$sys_info,3600);
+        }
         $this->assign('sys_info',$sys_info);
         return $this->fetch();
     }

@@ -253,7 +253,7 @@ class Auth extends AdminBase
             $rules = AuthRule::order('sort asc')->select()->toArray();
             return $this->apiTable($rules);
         }
-        $this->assign('title', '菜单管理');
+        $this->assign('title', '权限管理');
         return $this->fetch();
     }
 
