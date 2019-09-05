@@ -23,6 +23,9 @@ use here\Tree;
 class Auth extends AdminBase
 {
 
+    /**
+     * 管理员列表
+     */
     public function adminList(){
         if($this->request->isPost()){
             $limit = input('post.limit');
@@ -62,6 +65,9 @@ class Auth extends AdminBase
         return $this->fetch();
     }
 
+    /**
+     * 管理员状态转换
+     */
     public function adminStatusSwitch(){
         if($this->request->isPost()){
             $id = input('post.id');
@@ -76,6 +82,9 @@ class Auth extends AdminBase
     }
 
 
+    /**
+     * 添加管理员
+     */
     public function adminAdd()
     {
         if($this->request->isPost()){
@@ -113,6 +122,9 @@ class Auth extends AdminBase
 
     }
 
+    /**
+     * 删除管理员
+     */
     public function adminDel(){
         if($this->request->isPost()){
             $id = input('post.id/i');
@@ -123,6 +135,9 @@ class Auth extends AdminBase
         }
     }
 
+    /**
+     * 编辑管理员
+     */
     public function adminEdit(){
         if($this->request->isPost()){
             $data = input('post.');
@@ -163,10 +178,16 @@ class Auth extends AdminBase
         return $this->fetch('admin_op');
     }
 
+    /**
+     * 获取所有权限组
+     */
     public function getGroups(){
         return AuthGroup::where('status',1)->select()->toArray();
     }
 
+    /**
+     * 权限组列表
+     */
     public function groupList(){
         if($this->request->isPost()){
             return $this->apiTable($this->getGroups());
@@ -175,6 +196,9 @@ class Auth extends AdminBase
         return $this->fetch();
     }
 
+    /**
+     * 权限组添加
+     */
     public function groupAdd(){
         if($this->request->isPost()){
             $data = input('post.');
@@ -196,6 +220,9 @@ class Auth extends AdminBase
         }
     }
 
+    /**
+     * 权限组编辑
+     */
     public function groupEdit(){
         if($this->request->isPost()){
             $data = input('post.');
@@ -209,6 +236,9 @@ class Auth extends AdminBase
         return $this->fetch('group_op');
     }
 
+    /**
+     * 权限组权限配置
+     */
     public function groupRules(){
         $group_id = input('get.group_id/d');
         $rules = AuthRule::field('id,pid,title')->order('sort', 'desc')->select()->toArray();
@@ -218,6 +248,13 @@ class Auth extends AdminBase
         return $this->fetch();
     }
 
+    /**
+     * 权限树
+     * @param $rules
+     * @param int $pid
+     * @param $group_rules
+     * @return array
+     */
     public function buildZtree($rules, $pid=0, $group_rules){
         $ztree=[];
         $rulesArray = explode(',', $group_rules);
@@ -234,6 +271,9 @@ class Auth extends AdminBase
         return $ztree;
     }
 
+    /**
+     * 权限更新
+     */
     public function groupSaveRules(){
         if($this->request->isPost()) {
             $data = input('post.');
@@ -248,6 +288,9 @@ class Auth extends AdminBase
         }
     }
 
+    /**
+     * 权限列表
+     */
     public function ruleList(){
         if($this->request->isPost()) {
             $rules = AuthRule::order('sort asc')->select()->toArray();
@@ -257,6 +300,9 @@ class Auth extends AdminBase
         return $this->fetch();
     }
 
+    /**
+     * 是否鉴权
+     */
     public function ruleIsAuth(){
         if($this->request->isPost()){
             $id = input('post.id');
@@ -266,6 +312,9 @@ class Auth extends AdminBase
         }
     }
 
+    /**
+     * 是否菜单
+     */
     public function ruleIsMenu(){
         if($this->request->isPost()){
             $id = input('post.id');
@@ -275,6 +324,9 @@ class Auth extends AdminBase
         }
     }
 
+    /**
+     * 权限编辑
+     */
     public function ruleEdit(){
         if($this->request->isPost()){
             $data = input('post.');
@@ -289,6 +341,9 @@ class Auth extends AdminBase
         return $this->fetch('rule_op');
     }
 
+    /**
+     * 权限添加
+     */
     public function ruleAdd(){
         if($this->request->isPost()) {
             $data = input('post.');
@@ -303,6 +358,9 @@ class Auth extends AdminBase
         return $this->fetch('rule_op');
     }
 
+    /**
+     * 权限树
+     */
     public function getRuleTree(){
         $all_list = AuthRule::where('status',1)
             ->order('sort asc')

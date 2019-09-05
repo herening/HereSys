@@ -13,6 +13,10 @@ use app\common\base\AdminBase;
 
 class HereUpload extends AdminBase {
 
+    /**
+     * 图片上传
+     * @return \think\response\Json
+     */
     public function uploadImg(){
         // 获取表单上传文件 例如上传了001.jpg
         $file = $this->request->file('file');

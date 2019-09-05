@@ -20,7 +20,6 @@ use here\Tree;
 use think\Controller;
 //use think\facade\Hook;
 use think\Db;
-use think\facade\Cache;
 use think\facade\Request;
 use think\facade\Session;
 
@@ -31,6 +30,10 @@ class AdminBase extends Controller
     protected $rules_array;
     protected $group_id;
 
+    /**
+     * 系统初始化
+     * @return bool|void
+     */
     public function initialize()
     {
         $this->path = Request::path();
@@ -60,6 +63,9 @@ class AdminBase extends Controller
         }
     }
 
+    /**
+     * 验证权限
+     */
     public function checkAuth(){
         $all_need_list = AuthRule::where('status',1)
             ->where('is_auth', 1)
@@ -74,6 +80,10 @@ class AdminBase extends Controller
         }
     }
 
+    /**
+     * 根据权限组获取菜单
+     * @param $group_id
+     */
     public function getMenus($group_id){
         $rules_array = $this->getRulesArray($group_id);
         $menu_list = AuthRule::where(['status' => 1, 'id' => $rules_array])
@@ -88,12 +98,23 @@ class AdminBase extends Controller
         $this->assign('menus', json_encode($menu_out));
     }
 
+    /**
+     * 获取权限数组
+     * @return array
+     */
     public function getRulesArray(){
         $rules = AuthGroup::get($this->group_id);
         $rules_array = explode(',', $rules['rules']);
         return $rules_array;
     }
 
+    /**
+     * 前端成功返回
+     * @param string $msg
+     * @param array $data
+     * @param int $code
+     * @return \think\response\Json
+     */
     public function apiSuccess($msg = '', $data = [], $code = 200){
         $result = [
             'msg'  => $msg,
@@ -103,6 +124,13 @@ class AdminBase extends Controller
         return json($result);
     }
 
+    /**
+     * 前端失败返回
+     * @param string $msg
+     * @param array $data
+     * @param int $code
+     * @return \think\response\Json
+     */
     public function apiError($msg = '', $data = [], $code = 0){
         $result = [
             'msg'  => $msg,
@@ -127,18 +155,30 @@ class AdminBase extends Controller
         return json($result);
     }
 
+    /**
+     * 验证码验证
+     * @param $code
+     * @return bool
+     */
     public function verify($code){
         return captcha_check($code);
     }
 
+    /**
+     * 是否登录
+     * @return bool
+     */
     public function isLogin(){
         $admin = Session::get('admin');
         if($admin['id'] > 0){
             return true;
         }
-
     }
 
+    /**
+     * 系统信息
+     * @return mixed
+     */
     public function sysInfo(){
         $sys_info['os']             = PHP_OS;
         $sys_info['zlib']           = function_exists('gzclose') ? 'YES' : 'NO';//zlib
@@ -164,9 +204,4 @@ class AdminBase extends Controller
         }
         return $sys_info;
     }
-
-
-
-
-
 }

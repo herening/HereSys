@@ -20,6 +20,10 @@ use think\facade\Session;
 
 class Index extends AdminBase
 {
+    /**
+     * 首页入口
+     * @return mixed
+     */
     public function index()
     {
         //echo config('app.view_type');
@@ -27,6 +31,10 @@ class Index extends AdminBase
         return $this->fetch();
     }
 
+    /**
+     * 系统信息
+     * @return mixed
+     */
     public function info(){
         $sys_info = Cache::get('sys_info');
         if(!$sys_info){
@@ -37,6 +45,10 @@ class Index extends AdminBase
         return $this->fetch();
     }
 
+    /**
+     * 登录
+     * @return mixed|\think\response\Json
+     */
     public function login()
     {
         if($this->isLogin()){
@@ -81,11 +93,19 @@ class Index extends AdminBase
         return $this->fetch();
     }
 
+    /**
+     * 登出
+     * @return \think\response\Json
+     */
     public function logout(){
         Session::delete('admin');
         return $this->apiSuccess('登出成功！',"admin/index/login");
     }
 
+    /**
+     * 清空缓存
+     * @return \think\response\Json
+     */
     public function clearCache(){
         if($this->request->isPost()){
             Cache::clear();
