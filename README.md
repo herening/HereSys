@@ -8,7 +8,7 @@
 * PHP >= 5.4.0
 * PDO PHP Extension
 * MBstring PHP Extension
-* CURL PHP Extension
+* CURL PHP Extension 
 
 ### 下载方式
 
