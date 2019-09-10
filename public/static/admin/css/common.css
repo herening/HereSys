@@ -40,7 +40,7 @@
 }
 
 .layui-tab-item.layui-show{
-	position: absolute;
+	/*position: absolute;*/
 	top: 2px;
 	bottom: 0;
 	left: 0;
@@ -67,6 +67,10 @@
 	height: auto;
 }
 
+
+.layui-menu-tips .layui-icon{
+	display: inline-block;
+}
 
 
 

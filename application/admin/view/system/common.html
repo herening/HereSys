@@ -1,0 +1,163 @@
+{include file="common/header"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <div class="layui-tab">
+        <ul class="layui-tab-title">
+            <li class="layui-this">基础设置</li>
+            <li>网站管理</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <form class="layui-form layui-form-pane" lay-filter="form-system">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">网站名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="site_name" lay-verify="required" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">网址</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="site_url" lay-verify="url" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">LOGO</label>
+                        <input type="hidden" name="logo" id="logo">
+                        <div class="layui-input-block">
+                            <div class="layui-upload">
+                                <button type="button" class="layui-btn layui-btn-primary" id="upload_logo"><i class="icon icon-upload3"></i>点击上传</button>
+                                <div class="layui-upload-list">
+                                    <img class="layui-upload-img" id="show_logo">
+                                    <p id="demoText"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备案号</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="record" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">Copyright</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="copyright" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">地址</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="address" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">联系电话</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="tel" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">Email</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="email" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn" lay-submit="" lay-filter="system_submit">提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="layui-tab-item">
+                <form class="layui-form layui-form-pane" lay-filter="form-system">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="title" lay-verify="required" placeholder="" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">关键词</label>
+                        <div class="layui-input-block">
+                            <textarea name="keywords" lay-verify="required" placeholder="" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item layui-form-text">
+                        <label class="layui-form-label">描述</label>
+                        <div class="layui-input-block">
+                            <textarea name="brief" lay-verify="required" placeholder="" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn" lay-submit="" lay-filter="system_submit">{:lang('submit')}</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">{:lang('reset')}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+{include file="common/footer"/}
+<script>
+    layui.use(['form', 'layer','upload','element'], function () {
+        var form = layui.form,layer = layui.layer,upload = layui.upload,$ = layui.jquery,element = layui.element;
+        var system = {$system|raw};
+        form.val("form-system", system);
+        $('#show_logo').attr('src',system.logo);
+
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#upload_logo'
+            ,url: '{:url("HereUpload/uploadImg")}'
+            ,accept: 'images'
+            ,before: function(obj){
+                obj.preview(function(index, file, result){
+                    $('#show_logo').attr('src', result);
+                });
+            }
+            ,done: function(res){
+                //上传成功
+                if(res.code===200){
+                    //console.log(res);
+                    $("#logo").val(res.data.path);
+                }else{
+                    //如果上传失败
+                    return layer.msg(res.msg);
+                }
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+        //提交监听
+        form.on('submit(system_submit)', function (data) {
+            data.field.id = system.id;
+            loading =layer.load(1, {shade: [0.1,'#fff']});
+            $.post("{:url('system/common')}",data.field,function(res){
+                layer.close(loading);
+                if(res.code === 200){
+                    layer.msg(res.msg,{icon: 1, time: 1000});
+                }else{
+                    layer.msg(res.msg,{icon: 2, time: 1000});
+                }
+            });
+        })
+    })
+</script>
+</body>
+</html>
