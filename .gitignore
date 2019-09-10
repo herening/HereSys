@@ -5,6 +5,5 @@
 thinkphp
 .env
 /composer.lock
-/config/database.php
 /public/uploads/admin
 /public/uploads/index
