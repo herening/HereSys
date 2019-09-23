@@ -1,12 +1,15 @@
 <?php
 namespace app\index\controller;
 
+use app\admin\model\AuthRule;
 use app\common\base\FrontBase;
 
 class Index extends FrontBase
 {
     public function index()
     {
+        $list = AuthRule::where('status',1)->select()->toJson();
+        $this->assign('list',$list);
         return $this->fetch();
     }
 

@@ -20,7 +20,12 @@ class AuthRule extends Model
 {
     protected $autoWriteTimestamp = true;
 
-    public function getUrlAttr($value){
+/*    public function getUrlAttr($value){
+        return strtolower($value);
+    }*/
+
+    protected function setUrlAttr($value)
+    {
         return strtolower($value);
     }
 }

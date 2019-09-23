@@ -36,7 +36,7 @@ class AdminBase extends Controller
      */
     public function initialize()
     {
-        $this->path = Request::path();
+        $this->path = strtolower(Request::controller()) .'/'. strtolower(Request::action());
         $this->group_id = Session::get('admin.group_id');
         $this->rules_array = $this->getRulesArray();
         $this->getMenus($this->group_id);
@@ -75,18 +75,17 @@ class AdminBase extends Controller
                 ->where('is_auth', 1)
                 ->column('url');
             if(!in_array($this->path, $url_list) ){
-                $this->error('您没有该权限！');
+                return view(111,401);exit();
             }
         }
     }
 
     /**
      * 根据权限组获取菜单
-     * @param $group_id
      */
-    public function getMenus($group_id){
-        $rules_array = $this->getRulesArray($group_id);
-        $menu_list = AuthRule::where(['status' => 1, 'id' => $rules_array])
+    public function getMenus(){
+        //$rules_array = $this->getRulesArray($group_id);
+        $menu_list = AuthRule::where(['status' => 1, 'id' => $this->rules_array])
                      //->where('type', '>', 0)
                      ->where('is_menu', '=', 1)
                      ->column('id, title, pid, url, icon');  //column output array
