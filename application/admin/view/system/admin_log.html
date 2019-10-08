@@ -1,0 +1,91 @@
+{include file="common/header" /}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{$title}</legend>
+    </fieldset>
+    <!--search start-->
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn layuiadmin-btn-useradmin" lay-submit="" lay-filter="log_search">
+                    <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!--search end-->
+    <table class="layui-table" id="log_list" lay-filter="log_list"></table>
+</div>
+{include file="common/footer" /}
+
+<script type="text/html" id="operate">
+    <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    layui.use(['table', 'form', 'layer'], function () {
+        var table = layui.table, form = layui.form, $ = layui.jquery, layer = layui.layer;
+        var tableIn = table.render({
+            elem: '#log_list',
+            url: '{:url("system/adminLog")}',
+            method:'post',
+            //toolbar: '#topBtn',
+            title:'{$title}',
+            page:true,
+            limit: 10,
+            cols: [[
+                {field:'id', title: '编号', width:60,fixed: true}
+                ,{field:'username', title: '用户名', width:80}
+                ,{field:'url', title: '路由', width:300}
+                ,{field:'title', title: '标题', width:150}
+                ,{field:'content', title: '内容', width:350}
+                ,{field:'ip', title: '{:lang("ip")}',width:150}
+                ,{field:'user_agent', title: '设备',width:150}
+                ,{field:'create_time', title: '创建时间',width:200}
+                ,{width:160, align:'center', toolbar: '#operate'}
+            ]]
+        });
+
+        //监听搜索
+        form.on('submit(log_search)', function(data){
+            var field = data.field;
+            //执行重载
+            table.reload('log_list', {
+                where: field
+            });
+        });
+
+
+        table.on('tool(log_list)', function (obj) {
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+            if(layEvent === 'detail'){ //查看
+                //do something
+            } else if(layEvent === 'del'){ //删除
+                layer.confirm('真的删除行么', function(index){
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+
+                    //向服务端发送删除指令
+                    $.post('{:url("logDel")}', {'id':data.id}, function (res) {
+                        if(res.code === 200){
+                            layer.msg(res.msg);
+                            layer.close(index);
+                        }
+                    })
+                });
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>

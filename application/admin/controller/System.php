@@ -10,6 +10,7 @@
  */
 namespace app\admin\controller;
 
+use app\admin\model\AdminLog;
 use app\common\base\AdminBase;
 use app\admin\model\Config;
 
@@ -26,6 +27,41 @@ class System extends AdminBase{
         $this->assign('title', '基本设置');
         return $this->fetch();
     }
+
+    public function adminLog(){
+        if($this->request->isPost()){
+            $limit = input('post.limit');
+            $page = input('post.page');
+            $where = [];
+            if($username = input('post.username')){
+                $username = ['username','like','%'.$username.'%'];
+                $where+=$username;
+            }
+            if($where){
+                $where= [$where];  //heretip: [] necessary;
+            }
+            $logList  = AdminLog::where($where)
+                ->paginate($limit, false,['page'=>$page])
+                ->toArray();
+
+            if($logList){
+                return $this->apiTable($logList['data'], 0 ,'', $logList['total']);
+            }
+        }
+        $this->assign('title', '管理员日志列表');
+        return $this->fetch();
+    }
+
+    public function logDel(){
+        if($this->request->isPost()){
+            $id = input('post.id');
+            if($id){
+                AdminLog::where('id', $id)->delete();
+                return $this->apiSuccess('删除成功！');
+            }
+        }
+    }
+
 
 
 }

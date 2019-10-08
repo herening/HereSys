@@ -75,7 +75,7 @@ class AdminBase extends Controller
                 ->where('is_auth', 1)
                 ->column('url');
             if(!in_array($this->path, $url_list) ){
-                return view(111,401);exit();
+                return $this->apiError();exit();
             }
         }
     }
