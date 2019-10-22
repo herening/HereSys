@@ -26,22 +26,6 @@
             <?php break;?>
         <?php } ?>
         <p class="detail"></p>
-        <p class="jump">
-            页面自动 <a id="href" href="<?php echo($url);?>">跳转</a> 等待时间： <b id="wait"><?php echo($wait);?></b>
-        </p>
     </div>
-    <script type="text/javascript">
-        (function(){
-            var wait = document.getElementById('wait'),
-                href = document.getElementById('href').href;
-            var interval = setInterval(function(){
-                var time = --wait.innerHTML;
-                if(0 >= time) {
-                    location.href = href;
-                    clearInterval(interval);
-                };
-            }, 1000);
-        })();
-    </script>
 </body>
 </html>

@@ -75,7 +75,7 @@ class AdminBase extends Controller
                 ->where('is_auth', 1)
                 ->column('url');
             if(!in_array($this->path, $url_list) ){
-                return $this->apiError();exit();
+                return $this->error('无权访问','');
             }
         }
     }

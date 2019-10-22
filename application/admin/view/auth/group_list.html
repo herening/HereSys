@@ -146,20 +146,23 @@
                     ,yes: function(index, layero){
                         var iframeWindow = window['layui-layer-iframe'+ index]
                             ,submit = layero.find('iframe').contents().find('#group_submit');
-                        //监听提交
-                        iframeWindow.layui.form.on('submit(group_submit)', function(data){
-                            var field = data.field; //获取提交的字段
-                            //提交 Ajax 成功后，静态更新表格中的数据
-                            $.post('{:url("groupAdd")}', field, function (res) {
-                                if (res.code === 200) {
-                                    tableIn.reload();//table.reload('list'); //数据刷新
-                                    layer.close(index); //关闭弹层
-                                    layer.msg(res.msg);
-                                }else{
-                                    return false;
-                                }
+                        if(submit.length > 0){
+                            iframeWindow.layui.form.on('submit(group_submit)', function(data){
+                                var field = data.field; //获取提交的字段
+                                //提交 Ajax 成功后，静态更新表格中的数据
+                                $.post('{:url("groupAdd")}', field, function (res) {
+                                    if (res.code === 200) {
+                                        tableIn.reload();//table.reload('list'); //数据刷新
+                                        layer.close(index); //关闭弹层
+                                        layer.msg(res.msg);
+                                    }else{
+                                        return false;
+                                    }
+                                });
                             });
-                        });
+                        }else{
+                            layer.close(index);
+                        }
                         submit.trigger('click');
                     }
                 });

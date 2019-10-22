@@ -17,6 +17,7 @@ return [
     // 全局替换标签
     'tpl_replace_string'  =>  [
         '__STATIC__'=>'/static',
-        '__LAY__' => '/static/layui',
+        '__LIB__' => '/static/libs',
+        '__LAY__' => '/static/libs/layui/src',
     ],
 ];
