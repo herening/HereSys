@@ -1,0 +1,12 @@
+{
+  "name": "heresys",
+  "description": "web framework",
+  "main": "",
+  "license": "Apache2.0",
+  "homepage": "http://www.heresys.com",
+  "private": true,
+  "dependencies": {
+    "layui": "https://github.com/sentsin/layui.git#^2.5.5",
+    "font-awesome": "^4.7.0"
+  }
+}
