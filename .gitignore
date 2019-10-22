@@ -7,3 +7,4 @@ thinkphp
 /composer.lock
 /public/uploads/admin
 /public/uploads/index
+/public/static/libs
