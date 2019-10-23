@@ -8,3 +8,4 @@ thinkphp
 /public/uploads/admin
 /public/uploads/index
 /public/static/libs
+/config/database.php
